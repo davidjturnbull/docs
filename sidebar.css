@@ -72,6 +72,12 @@
   width: fit-content !important;
 }
 
+/* Navbar: push search bar to the end instead of centered */
+:has(> button.group\/search) {
+  justify-content: flex-end !important;
+}
+
+
 /* Navbar: style "Get API key" as a proper button */
 nav a[href*="api_keys"] {
   background-color: #0090D0 !important;
