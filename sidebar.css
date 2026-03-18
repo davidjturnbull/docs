@@ -74,7 +74,7 @@
 
 /* Navbar: style "Get API key" as a proper button */
 nav a[href*="api_keys"] {
-  background-color: #01B2FF !important;
+  background-color: #0090D0 !important;
   color: #ffffff !important;
   padding: 0.375rem 1rem !important;
   border-radius: 9999px !important;
@@ -84,7 +84,7 @@ nav a[href*="api_keys"] {
 }
 
 nav a[href*="api_keys"]:hover {
-  background-color: #009ee0 !important;
+  background-color: #007bb8 !important;
   box-shadow: 0 4px 6px rgba(1, 178, 255, 0.3) !important;
 }
 
