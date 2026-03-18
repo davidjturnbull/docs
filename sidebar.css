@@ -1,0 +1,58 @@
+/* Sidebar: active page pill highlight + muted inactive links */
+
+/* Group titles: bold, primary text */
+.sidebar-group-header {
+  font-weight: 700 !important;
+  font-size: 0.9375rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+/* All sidebar links: muted by default */
+.sidebar-group li a {
+  border-radius: 0.5rem !important;
+  margin-left: 0.25rem !important;
+  margin-right: 0.25rem !important;
+  transition: background-color 150ms, color 150ms !important;
+}
+
+/* Inactive links: muted text */
+.sidebar-group li a.text-gray-700 {
+  color: #9CA3AF !important; /* text-muted in light */
+}
+
+.dark .sidebar-group li a.text-gray-700,
+.sidebar-group li a.dark\:text-gray-400 {
+  color: rgba(255, 255, 255, 0.5) !important; /* text-tertiary in dark */
+}
+
+/* Inactive hover */
+.sidebar-group li a.text-gray-700:hover {
+  color: #4B5563 !important; /* text-secondary light */
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}
+
+.dark .sidebar-group li a.text-gray-700:hover {
+  color: rgba(255, 255, 255, 0.7) !important; /* text-secondary dark */
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Active link: pill highlight */
+.sidebar-group li a.text-primary,
+.sidebar-group li a.\!text-primary {
+  background-color: rgba(0, 0, 0, 0.06) !important;
+  color: #111827 !important; /* text-primary light */
+  text-shadow: none !important;
+  font-weight: 500 !important;
+}
+
+.dark .sidebar-group li a.text-primary,
+.dark .sidebar-group li a.\!text-primary,
+.sidebar-group li a.dark\:text-primary-light {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important; /* text-primary dark */
+}
+
+/* More spacing between groups */
+.sidebar-group {
+  margin-bottom: 1.25rem !important;
+}
