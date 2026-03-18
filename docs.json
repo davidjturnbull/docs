@@ -168,7 +168,7 @@
     "primary": {
       "type": "button",
       "label": "Get API key",
-      "href": "https://nordicfinancialnews.com/account/api_keys/new"
+      "href": "https://nordicfinancialnews.com/settings/api_keys"
     }
   },
   "contextual": {
