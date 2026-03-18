@@ -69,7 +69,7 @@
       },
       {
         "tab": "API reference",
-        "openapi": "openapi.yaml",
+        "openapi": "https://nordicfinancialnews.com/api/v1/openapi.json",
         "groups": [
           {
             "group": "Overview",
