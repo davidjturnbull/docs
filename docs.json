@@ -63,14 +63,6 @@
               "guides/field-projection",
               "guides/errors"
             ]
-          },
-          {
-            "group": "MCP server",
-            "pages": [
-              "mcp/index",
-              "mcp/tools",
-              "mcp/resources"
-            ]
           }
         ]
       },
@@ -149,15 +141,24 @@
             ]
           }
         ]
+      },
+      {
+        "tab": "MCP server",
+        "groups": [
+          {
+            "group": "MCP server",
+            "pages": [
+              "mcp/index",
+              "mcp/tools",
+              "mcp/resources"
+            ]
+          }
+        ]
       }
     ]
   },
   "navbar": {
     "links": [
-      {
-        "label": "MCP",
-        "href": "/mcp/index"
-      },
       {
         "label": "Support",
         "href": "mailto:api@nordicfinancialnews.com"
