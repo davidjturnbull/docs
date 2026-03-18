@@ -3,14 +3,26 @@
   "theme": "palm",
   "name": "Nordic Financial News",
   "colors": {
-    "primary": "#1E3A5F",
-    "light": "#4A90D9",
-    "dark": "#0F2440"
+    "primary": "#01B2FF",
+    "light": "#01B2FF",
+    "dark": "#0090D0"
   },
   "favicon": "/favicon.svg",
   "logo": {
     "light": "/logo/light.svg",
     "dark": "/logo/dark.svg"
+  },
+  "appearance": {
+    "default": "dark"
+  },
+  "background": {
+    "color": {
+      "light": "#F9FAFB",
+      "dark": "#0a0a0b"
+    }
+  },
+  "styling": {
+    "codeblocks": "dark"
   },
   "api": {
     "playground": {
