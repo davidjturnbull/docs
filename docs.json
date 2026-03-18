@@ -129,6 +129,14 @@
             ]
           },
           {
+            "group": "Indices",
+            "pages": [
+              "GET /api/v1/indices",
+              "GET /api/v1/indices/{identifier}",
+              "GET /api/v1/indices/{identifier}/companies"
+            ]
+          },
+          {
             "group": "Search",
             "pages": [
               "GET /api/v1/search"
