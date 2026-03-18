@@ -56,3 +56,25 @@
 .sidebar-group {
   margin-bottom: 1.25rem !important;
 }
+
+/* Tabs: card container — surface-elevated bg, visible border, rounded */
+.tab-container {
+  border: 1px solid rgba(255, 255, 255, 0.08) !important; /* border-default */
+  border-radius: 0.75rem !important;
+  overflow: hidden !important;
+  padding: 1.25rem 1.25rem 0 !important;
+  background-color: #111113 !important; /* surface-elevated dark */
+}
+
+/* Tabs: contain the underline to the tab label width, not full page */
+.tab-container [role="tablist"] {
+  min-width: 0 !important;
+  width: fit-content !important;
+}
+
+/* Tab panel: flush with card padding */
+.tab-container [role="tabpanel"] {
+  margin: 0 -1.25rem !important;
+  padding: 1.25rem !important;
+  background-color: #111113 !important;
+}
