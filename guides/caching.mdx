@@ -1,0 +1,56 @@
+---
+title: "Caching"
+description: "Use ETags and conditional requests to save bandwidth and reduce API usage."
+---
+
+The API supports HTTP caching with ETags on individual resource endpoints.
+
+## How it works
+
+<Steps>
+  <Step title="Make a request">
+    The response includes an `ETag` header with a unique identifier for the current state of the resource.
+
+    ```bash
+    curl -i -H "Authorization: Bearer $API_KEY" \
+      "https://nordicfinancialnews.com/api/v1/articles/art_abc123def"
+    ```
+
+    ```http Response headers
+    HTTP/1.1 200 OK
+    ETag: "a1b2c3d4e5f6"
+    ```
+  </Step>
+
+  <Step title="Send the ETag on subsequent requests">
+    Include the `If-None-Match` header with the ETag value:
+
+    ```bash
+    curl -i -H "Authorization: Bearer $API_KEY" \
+      -H 'If-None-Match: "a1b2c3d4e5f6"' \
+      "https://nordicfinancialnews.com/api/v1/articles/art_abc123def"
+    ```
+  </Step>
+
+  <Step title="Receive a 304 if unchanged">
+    If the resource hasn't changed, the API returns `304 Not Modified` with no body:
+
+    ```http
+    HTTP/1.1 304 Not Modified
+    ```
+  </Step>
+</Steps>
+
+## Benefits
+
+- **Save bandwidth** by not re-downloading unchanged data
+- **Reduce monthly usage** since `304` responses do not count against your monthly quota
+- **Faster responses** with no body to parse
+
+## When caching is disabled
+
+ETags are not available when using:
+
+- The `q` (search) parameter
+- The `updated_after` parameter
+- List endpoints (only individual resource endpoints support ETags)

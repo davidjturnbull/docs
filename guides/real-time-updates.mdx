@@ -1,0 +1,82 @@
+---
+title: "Real-time updates"
+description: "Keep a local mirror in sync using the updated_after polling pattern."
+---
+
+Use the `updated_after` parameter on the `/articles` and `/stories` endpoints to fetch only records that changed since your last sync.
+
+## Polling pattern
+
+<Steps>
+  <Step title="Store your last sync timestamp">
+    Start with an initial timestamp (e.g. when you first synced) and update it after each successful poll.
+  </Step>
+
+  <Step title="Request updated records">
+    Pass `updated_after` with your stored timestamp:
+
+    ```bash
+    curl -H "Authorization: Bearer $API_KEY" \
+      "https://nordicfinancialnews.com/api/v1/articles?updated_after=2024-01-01T00:00:00Z&fields=id,title_en,summary_en,published_at"
+    ```
+  </Step>
+
+  <Step title="Process and repeat">
+    Process the results, update your timestamp to the current time, then wait before polling again.
+  </Step>
+</Steps>
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+LAST_SYNC="2024-01-01T00:00:00Z"
+
+# Fetch new/updated articles since last sync
+curl -H "Authorization: Bearer $API_KEY" \
+  "https://nordicfinancialnews.com/api/v1/articles?updated_after=$LAST_SYNC&fields=id,title_en,summary_en,published_at"
+
+# Fetch new/updated stories since last sync
+curl -H "Authorization: Bearer $API_KEY" \
+  "https://nordicfinancialnews.com/api/v1/stories?updated_after=$LAST_SYNC"
+```
+
+```python Python
+import requests
+import time
+from datetime import datetime, timezone
+
+API_KEY = "your_api_key"
+BASE = "https://nordicfinancialnews.com/api/v1"
+headers = {"Authorization": f"Bearer {API_KEY}"}
+last_sync = "2024-01-01T00:00:00Z"
+
+while True:
+    for endpoint in ["articles", "stories"]:
+        resp = requests.get(
+            f"{BASE}/{endpoint}",
+            headers=headers,
+            params={"updated_after": last_sync},
+        )
+        items = resp.json()[endpoint]
+        for item in items:
+            process(item)  # your sync logic
+
+    last_sync = datetime.now(timezone.utc).isoformat()
+    time.sleep(60)  # poll every 60 seconds
+```
+
+</CodeGroup>
+
+## How updated_after works
+
+When `updated_after` is set:
+
+- **All matching results** are returned in a single response (cursor pagination is disabled)
+- **Caching is disabled** since the results are time-sensitive
+- Results include both newly created and updated records
+
+<Tip>
+Use the `fields` parameter to request only the fields you need, reducing bandwidth and response time. A 30-60 second polling interval works well for most use cases.
+</Tip>

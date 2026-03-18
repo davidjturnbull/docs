@@ -1,0 +1,50 @@
+---
+title: "Error handling"
+description: "Error format, status codes, and how to handle API errors."
+---
+
+The API uses [RFC 9457 Problem Details](https://www.rfc-editor.org/rfc/rfc9457) for error responses.
+
+## Error format
+
+```json
+{
+  "type": "https://docs.nordicfinancialnews.com/problems/not-found",
+  "title": "Resource not found",
+  "status": 404,
+  "detail": "No article found with id 'abc123'."
+}
+```
+
+| Field | Description |
+|-------|-------------|
+| `type` | URI identifying the error type |
+| `title` | Short human-readable summary |
+| `status` | HTTP status code |
+| `detail` | Specific explanation for this occurrence |
+
+## Status codes
+
+| Code | Meaning | Common cause |
+|------|---------|-------------|
+| `400` | Bad request | Invalid parameters or malformed request |
+| `401` | Unauthorized | Missing or invalid API key |
+| `403` | Forbidden | API key lacks required scope |
+| `404` | Not found | Resource does not exist |
+| `429` | Too many requests | Rate limit or monthly limit exceeded |
+| `500` | Internal server error | Unexpected server error |
+
+## Rate limit errors
+
+When you hit a rate limit, the response includes a `Retry-After` header indicating how many seconds to wait:
+
+```http
+HTTP/1.1 429 Too Many Requests
+Retry-After: 60
+```
+
+Check the `X-RateLimit-Remaining` and `X-Monthly-Remaining` headers to monitor your usage proactively. See [authentication](/guides/authentication) for details on rate limits and monthly quotas.
+
+## Request tracing
+
+Every response includes an `X-Request-Id` header. Include this ID when contacting support about a specific request.

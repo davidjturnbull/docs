@@ -1,0 +1,2305 @@
+---
+openapi: 3.0.1
+info:
+  title: Nordic Financial News API
+  version: v1.0
+  description: |
+    REST API for accessing translated Nordic financial news articles and stories.
+
+    ## Authentication
+    All endpoints require Bearer token authentication using an API key.
+    Include the API key in the Authorization header:
+    ```
+    Authorization: Bearer YOUR_API_KEY
+    ```
+
+    ## Rate Limiting
+    The API is rate limited to 3600 requests per hour per API key.
+    Rate limit information is included in response headers:
+    - `X-RateLimit-Limit`: Maximum requests per hour
+    - `X-RateLimit-Remaining`: Requests remaining
+    - `X-RateLimit-Reset`: Seconds until limit resets
+
+    ## Monthly Usage Limits
+    Each API key has a monthly request allowance based on your plan:
+    - **Free**: 50 requests/month
+    - **Plus**: 10,000 requests/month
+    - **Pro**: 50,000 requests/month
+
+    Monthly usage information is included in response headers:
+    - `X-Monthly-Limit`: Maximum requests per month
+    - `X-Monthly-Remaining`: Requests remaining this month
+    - `X-Monthly-Reset`: ISO 8601 timestamp when the limit resets (end of month)
+
+    When the monthly limit is exceeded, the API returns `429 Too Many Requests` with a `Retry-After` header.
+
+    ## Caching
+    The API supports HTTP caching with ETags. Include the `If-None-Match`
+    header with the ETag from a previous response to receive a 304 Not Modified
+    response if the data hasn't changed.
+
+    ## Pagination
+    List endpoints support cursor-based pagination. Use the `cursor` parameter
+    with the value from `pagination.next_cursor` in the response to fetch the next page.
+
+    ## Error Handling
+    Errors follow the RFC 9457 Problem Details format with appropriate HTTP status codes.
+  contact:
+    name: API Support
+    email: api@nordicfinancialnews.com
+paths:
+  "/api/v1/articles/{public_id}":
+    get:
+      summary: Get article details
+      tags:
+      - Articles
+      security:
+      - bearer_auth: []
+      description: Returns the full details of a single article, including AI-translated
+        content, key points, associated companies, and topic tags. Supports conditional
+        requests via `If-None-Match` for efficient caching.
+      parameters:
+      - name: public_id
+        in: path
+        required: true
+        description: Article ID (e.g. `art_abc123def`).
+        example: art_abc123def
+        schema:
+          type: string
+      - name: If-None-Match
+        in: header
+        required: false
+        description: ETag value from a previous response. Returns `304 Not Modified`
+          if the article has not changed.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Article found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  article:
+                    "$ref": "#/components/schemas/ArticleDetail"
+        '404':
+          description: Article not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/problem_details"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/problem_details"
+  "/api/v1/meta":
+    get:
+      summary: Get API metadata
+      tags:
+      - Meta
+      security:
+      - bearer_auth: []
+      description: Returns API metadata including version, capabilities, supported
+        fields, content types, and rate limit policy.
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: API metadata retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  version:
+                    type: string
+                    example: v1
+                  capabilities:
+                    type: array
+                    items:
+                      type: string
+                  supported_fields:
+                    type: object
+                    properties:
+                      articles:
+                        type: array
+                        items:
+                          type: string
+                      stories:
+                        type: array
+                        items:
+                          type: string
+                      categories:
+                        type: array
+                        items:
+                          type: string
+                      companies:
+                        type: array
+                        items:
+                          type: string
+                      countries:
+                        type: array
+                        items:
+                          type: string
+                      exchanges:
+                        type: array
+                        items:
+                          type: string
+                  content_types:
+                    type: array
+                    items:
+                      type: string
+                  rate_limit_policy:
+                    type: string
+                  supported_countries:
+                    type: array
+                    items:
+                      type: string
+                  supported_scopes:
+                    type: array
+                    items:
+                      type: string
+                required:
+                - version
+                - capabilities
+                - supported_fields
+                - content_types
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/problem_details"
+  "/api/v1/search":
+    get:
+      summary: Search across all resource types
+      tags:
+      - Search
+      security:
+      - bearer_auth: []
+      description: Performs a unified full-text search across articles, stories, companies,
+        countries, and exchanges. Results are grouped by resource type and ordered
+        by relevance within each group. Only returns results for resource types that
+        the API key has access to (based on scopes). Use `type` to limit which resource
+        types are searched. Ideal for building typeahead or global search experiences.
+      parameters:
+      - name: q
+        in: query
+        required: true
+        description: Full-text search query (2-200 characters).
+        example: Volvo
+        schema:
+          type: string
+      - name: type
+        in: query
+        required: false
+        description: 'Comma-separated list of resource types to search. Defaults to
+          all types. Valid values: `articles`, `stories`, `companies`, `countries`,
+          `exchanges`.'
+        example: articles,companies
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        description: Maximum number of results per resource type (default 5, max 25).
+        example: 5
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/SearchResult"
+        '400':
+          description: Invalid search query
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/problem_details"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/problem_details"
+  "/api/v1/stories":
+    get:
+      summary: List stories
+      tags:
+      - Stories
+      security:
+      - bearer_auth: []
+      description: Returns a paginated list of published stories ordered by publication
+        date (newest first). Stories are AI-generated clusters of related articles
+        about the same event or topic. Supports filtering by country, category, and
+        company ticker. Use `updated_after` for incremental syncing, or `q` for full-text
+        search ranked by relevance.
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        description: Number of stories to return per page (default 25, max 100).
+        example: 25
+        schema:
+          type: integer
+      - name: cursor
+        in: query
+        required: false
+        description: Opaque pagination cursor returned as `pagination.next_cursor`
+          from a previous response. Mutually exclusive with `q`.
+        schema:
+          type: string
+      - name: updated_after
+        in: query
+        required: false
+        description: 'ISO 8601 datetime. Returns only stories updated after this timestamp.
+          Use this for polling-based real-time updates: store the timestamp of your
+          last sync, then request only newer results on each poll (see the Real-Time
+          Updates guide at /api-docs). Disables cursor pagination — all matching results
+          are returned in a single response.'
+        example: '2024-01-01T00:00:00Z'
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: false
+        description: Full-text search query (2-200 characters). Results are ranked
+          by relevance instead of publication date. Mutually exclusive with `cursor`.
+          Disables caching.
+        example: Volvo earnings
+        schema:
+          type: string
+      - name: country
+        in: query
+        required: false
+        description: Filter by country using ISO 3166-1 alpha-2 code (e.g. `SE`, `NO`,
+          `DK`).
+        example: SE
+        schema:
+          type: string
+      - name: category
+        in: query
+        required: false
+        description: Filter by category ID.
+        example: cat_earnings1
+        schema:
+          type: string
+      - name: ticker
+        in: query
+        required: false
+        description: Filter by company stock ticker symbol. Returns stories mentioning
+          the company.
+        example: VOLV-B
+        schema:
+          type: string
+      - name: published_after
+        in: query
+        required: false
+        description: ISO 8601 datetime. Returns stories published on or after this
+          timestamp.
+        example: '2024-06-01T00:00:00Z'
+        schema:
+          type: string
+      - name: published_before
+        in: query
+        required: false
+        description: ISO 8601 datetime. Returns stories published before this timestamp.
+        example: '2024-12-31T23:59:59Z'
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: 'Comma-separated list of fields to include in the response. Available
+          fields: `id`, `title`, `summary`, `published_at`, `article_count`, `article_ids`,
+          `country`, `category`, `topics`, `companies`.'
+        example: id,title,summary,published_at
+        schema:
+          type: string
+      - name: If-None-Match
+        in: header
+        required: false
+        description: ETag value from a previous response. Returns `304 Not Modified`
+          if data has not changed.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Stories retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  stories:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/StorySummary"
+                  pagination:
+                    type: object
+                    properties:
+                      count:
+                        type: integer
+                        example: 25
+                      next_cursor:
+                        type: string
+                        nullable: true
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/problem_details"
+  "/api/v1/stories/{public_id}":
+    get:
+      summary: Get story details
+      tags:
+      - Stories
+      security:
+      - bearer_auth: []
+      description: Returns the full details of a single story, including AI-generated
+        content in Markdown format, associated articles, companies, and topic tags.
+        Supports conditional requests via `If-None-Match` for efficient caching.
+      parameters:
+      - name: public_id
+        in: path
+        required: true
+        description: Story ID (e.g. `sty_abc123def`).
+        example: sty_abc123def
+        schema:
+          type: string
+      - name: If-None-Match
+        in: header
+        required: false
+        description: ETag value from a previous response. Returns `304 Not Modified`
+          if the story has not changed.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Story found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  story:
+                    "$ref": "#/components/schemas/StoryDetail"
+        '404':
+          description: Story not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/problem_details"
+  "/api/v1/stories/{public_id}/articles":
+    get:
+      summary: List articles in a story
+      tags:
+      - Stories
+      security:
+      - bearer_auth: []
+      description: Returns the articles that belong to a story cluster, ordered by
+        relevance score (most relevant first). Each article includes its full summary
+        representation.
+      parameters:
+      - name: public_id
+        in: path
+        required: true
+        description: Story ID.
+        example: sty_abc123def
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        description: Number of articles to return per page (default 25, max 100).
+        example: 10
+        schema:
+          type: integer
+      - name: cursor
+        in: query
+        required: false
+        description: Opaque pagination cursor from a previous response.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Articles retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  articles:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/ArticleSummary"
+        '404':
+          description: Story not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/problem_details"
+  "/api/v1/articles":
+    get:
+      summary: List articles
+      tags:
+      - Articles
+      security:
+      - bearer_auth: []
+      description: Returns a paginated list of live, translated articles ordered by
+        publication date (newest first). Supports filtering by country, category,
+        company ticker, and content type. Use `updated_after` for incremental syncing,
+        or `q` for full-text search ranked by relevance. Use `ids` for batch lookup
+        of specific articles. Responses include cursor-based pagination and support
+        field projection to minimize payload size.
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for authentication
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        description: Number of articles to return per page (default 25, max 100).
+        example: 25
+        schema:
+          type: integer
+      - name: cursor
+        in: query
+        required: false
+        description: Opaque pagination cursor returned as `pagination.next_cursor`
+          from a previous response. Mutually exclusive with `q`.
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: 'Comma-separated list of fields to include in the response. Reduces
+          payload size. Available fields: `id`, `title`, `title_en`, `summary_en`,
+          `article_url`, `content_type`, `published_at`, `story_ids`, `source`, `companies`,
+          `country`, `category`, `image_url`.'
+        example: id,title_en,summary_en,published_at
+        schema:
+          type: string
+      - name: updated_after
+        in: query
+        required: false
+        description: 'ISO 8601 datetime. Returns only articles updated after this
+          timestamp. Use this for polling-based real-time updates: store the timestamp
+          of your last sync, then request only newer results on each poll (see the
+          Real-Time Updates guide at /api-docs). Disables cursor pagination — all
+          matching results are returned in a single response.'
+        example: '2024-01-01T00:00:00Z'
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: false
+        description: Full-text search query (2-200 characters). Results are ranked
+          by relevance instead of publication date. Mutually exclusive with `cursor`.
+          Disables caching.
+        example: Volvo earnings
+        schema:
+          type: string
+      - name: country
+        in: query
+        required: false
+        description: Filter by country using ISO 3166-1 alpha-2 code (e.g. `SE`, `NO`,
+          `DK`).
+        example: SE
+        schema:
+          type: string
+      - name: ticker
+        in: query
+        required: false
+        description: Filter by company stock ticker symbol. Returns articles mentioning
+          the company.
+        example: VOLV-B
+        schema:
+          type: string
+      - name: content_type
+        in: query
+        required: false
+        description: "Filter by article content type.:\n * `news` \n * `analysis`
+          \n * `press_release` \n * `market_commentary` \n * `market_news` \n * `trading_halt`
+          \n * `trading_event` \n * `other` \n "
+        schema:
+          type: string
+          enum:
+          - news
+          - analysis
+          - press_release
+          - market_commentary
+          - market_news
+          - trading_halt
+          - trading_event
+          - other
+          example: news
+      - name: published_after
+        in: query
+        required: false
+        description: ISO 8601 datetime. Returns articles published on or after this
+          timestamp.
+        example: '2024-06-01T00:00:00Z'
+        schema:
+          type: string
+      - name: published_before
+        in: query
+        required: false
+        description: ISO 8601 datetime. Returns articles published before this timestamp.
+        example: '2024-12-31T23:59:59Z'
+        schema:
+          type: string
+      - name: ids
+        in: query
+        required: false
+        description: Comma-separated list of article IDs for batch lookup (max 100).
+          Cannot be combined with `cursor` or `updated_after`.
+        example: art_abc123,art_def456
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Articles retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  articles:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        title:
+                          type: string
+                        title_en:
+                          type: string
+                        summary_en:
+                          type: string
+                        article_url:
+                          type: string
+                        content_type:
+                          type: string
+                          enum:
+                          - news
+                          - analysis
+                          - press_release
+                          - market_commentary
+                          - market_news
+                          - trading_halt
+                          - trading_event
+                          - other
+                        published_at:
+                          type: string
+                          format: date-time
+                        story_ids:
+                          type: array
+                          items:
+                            type: string
+                        category:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            name:
+                              type: string
+                        source:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            domain:
+                              type: string
+                          required:
+                          - name
+                          - domain
+                        companies:
+                          type: array
+                          items:
+                            type: object
+                        country:
+                          type: string
+                          nullable: true
+                        image_url:
+                          type: string
+                          nullable: true
+                      required:
+                      - id
+                      - title
+                      - title_en
+                      - category
+                      - summary_en
+                      - published_at
+                      - article_url
+                      - content_type
+                      - story_ids
+                      - source
+                      - companies
+                      - country
+                required:
+                - articles
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/problem_details"
+  "/api/v1/categories":
+    get:
+      summary: List categories
+      tags:
+      - Categories
+      security:
+      - bearer_auth: []
+      description: Returns all enabled article categories, ordered alphabetically
+        by name. Categories are used to classify articles and stories (e.g. Earnings,
+        M&A, IPO). Use category IDs to filter articles and stories by topic.
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for authentication
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        description: Number of categories to return per page (default 25, max 100).
+        example: 25
+        schema:
+          type: integer
+      - name: cursor
+        in: query
+        required: false
+        description: Opaque pagination cursor from a previous response.
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: 'Comma-separated list of fields to include. Available fields:
+          `id`, `name`, `description`.'
+        example: id,name
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Categories retrieved successfully
+          content:
+            application/json:
+              examples:
+                basic_response:
+                  value:
+                    categories:
+                    - id: cat_business12
+                      name: Business
+                      description: General business news and updates.
+                    - id: cat_tech123456
+                      name: Technology
+                      description: Technology sector news and innovations.
+                    pagination:
+                      count: 2
+                      next_cursor:
+              schema:
+                type: object
+                properties:
+                  categories:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CategorySummary"
+                  pagination:
+                    type: object
+                    properties:
+                      count:
+                        type: integer
+                      next_cursor:
+                        type: string
+                        nullable: true
+                required:
+                - categories
+        '401':
+          description: unauthorized
+        '403':
+          description: forbidden - missing scope
+  "/api/v1/categories/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Category ID
+      schema:
+        type: string
+    get:
+      summary: Get category details
+      tags:
+      - Categories
+      security:
+      - bearer_auth: []
+      description: Returns details for a single category, including its description.
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Category retrieved successfully
+          content:
+            application/json:
+              examples:
+                category_detail:
+                  value:
+                    category:
+                      id: cat_business12
+                      name: Business
+                      description: General business news and updates.
+              schema:
+                type: object
+                properties:
+                  category:
+                    "$ref": "#/components/schemas/CategorySummary"
+                required:
+                - category
+        '404':
+          description: not found
+  "/api/v1/categories/{public_id}/articles":
+    parameters:
+    - name: public_id
+      in: path
+      required: true
+      description: Category ID
+      example: cat_business12
+      schema:
+        type: string
+    get:
+      summary: List category articles
+      tags:
+      - Categories
+      security:
+      - bearer_auth: []
+      description: Returns articles classified under a specific category, ordered
+        by publication date (newest first). Supports incremental syncing via `updated_after`
+        and field projection.
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for authentication
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        description: Number of articles to return per page (default 25, max 100).
+        example: 25
+        schema:
+          type: integer
+      - name: cursor
+        in: query
+        required: false
+        description: Opaque pagination cursor from a previous response.
+        schema:
+          type: string
+      - name: updated_after
+        in: query
+        required: false
+        description: ISO 8601 datetime. Returns only articles updated after this timestamp.
+        example: '2024-01-01T00:00:00Z'
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include in the response.
+        example: id,title_en,summary_en,published_at
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Category articles retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  articles:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/ArticleSummary"
+                  pagination:
+                    type: object
+                    properties:
+                      count:
+                        type: integer
+                      next_cursor:
+                        type: string
+                        nullable: true
+                required:
+                - articles
+        '404':
+          description: Category not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/problem_details"
+  "/api/v1/categories/{public_id}/stories":
+    parameters:
+    - name: public_id
+      in: path
+      required: true
+      description: Category ID
+      example: cat_business12
+      schema:
+        type: string
+    get:
+      summary: List category stories
+      tags:
+      - Categories
+      security:
+      - bearer_auth: []
+      description: Returns stories classified under a specific category, ordered by
+        publication date (newest first). Supports incremental syncing via `updated_after`.
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for authentication
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        description: Number of stories to return per page (default 25, max 100).
+        example: 25
+        schema:
+          type: integer
+      - name: cursor
+        in: query
+        required: false
+        description: Opaque pagination cursor from a previous response.
+        schema:
+          type: string
+      - name: updated_after
+        in: query
+        required: false
+        description: ISO 8601 datetime. Returns only stories updated after this timestamp.
+        example: '2024-01-01T00:00:00Z'
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Category stories retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  stories:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/StorySummary"
+                  pagination:
+                    type: object
+                    properties:
+                      count:
+                        type: integer
+                      next_cursor:
+                        type: string
+                        nullable: true
+                required:
+                - stories
+        '404':
+          description: Category not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/problem_details"
+  "/api/v1/companies":
+    get:
+      summary: List companies
+      tags:
+      - Companies
+      security:
+      - bearer_auth: []
+      description: Returns a paginated list of verified Nordic companies, ordered
+        alphabetically by name. Use `q` for full-text search across company names
+        and aliases, ranked by relevance.
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for authentication
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        description: Number of companies to return per page (default 25, max 100).
+        example: 25
+        schema:
+          type: integer
+      - name: cursor
+        in: query
+        required: false
+        description: Opaque pagination cursor returned as `pagination.next_cursor`
+          from a previous response. Mutually exclusive with `q`.
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: 'Comma-separated list of fields to include in the response. Available
+          fields: `id`, `name`, `slug`, `ticker_symbol`.'
+        example: id,name,ticker_symbol
+        schema:
+          type: string
+      - name: q
+        in: query
+        required: false
+        description: Full-text search query (2-200 characters). Searches company names
+          and aliases. Results are ranked by relevance instead of alphabetical order.
+          Mutually exclusive with `cursor`.
+        example: Volvo
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Companies retrieved successfully
+          content:
+            application/json:
+              examples:
+                companies_list:
+                  value:
+                    companies:
+                    - id: comp_apple123
+                      name: Apple Inc.
+                      slug: apple-inc
+                      ticker_symbol: AAPL
+                    pagination:
+                      count: 1
+                      next_cursor:
+              schema:
+                type: object
+                properties:
+                  companies:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CompanySummary"
+                  pagination:
+                    type: object
+                    properties:
+                      count:
+                        type: integer
+                      next_cursor:
+                        type: string
+                        nullable: true
+                required:
+                - companies
+  "/api/v1/companies/{identifier}":
+    parameters:
+    - name: identifier
+      in: path
+      required: true
+      description: Company ID or ticker symbol
+      schema:
+        type: string
+    get:
+      summary: Get company details
+      tags:
+      - Companies
+      security:
+      - bearer_auth: []
+      description: Returns detailed information about a single company, including
+        alternative names (aliases), article and story counts, and stock listing details.
+        Look up by company ID (e.g. `comp_apple123`) or ticker symbol (e.g. `AAPL`,
+        `VOLV-B.ST`).
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Company retrieved successfully
+          content:
+            application/json:
+              examples:
+                company_detail:
+                  value:
+                    company:
+                      id: comp_apple123
+                      name: Apple Inc.
+                      slug: apple-inc
+                      ticker_symbol: AAPL
+                      aliases:
+                      - Apple Computer
+                      - Apple Computer Inc.
+                      article_count: 42
+                      story_count: 15
+              schema:
+                type: object
+                properties:
+                  company:
+                    "$ref": "#/components/schemas/CompanyDetail"
+                required:
+                - company
+        '404':
+          description: Company not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/problem_details"
+  "/api/v1/companies/{identifier}/articles":
+    parameters:
+    - name: identifier
+      in: path
+      required: true
+      description: Company ID or ticker symbol
+      schema:
+        type: string
+    get:
+      summary: List company articles
+      tags:
+      - Companies
+      security:
+      - bearer_auth: []
+      description: Returns articles that mention a specific company, ordered by publication
+        date (newest first). Use `primary_only=true` to return only articles where
+        this company is the primary subject of the article.
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for authentication
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        description: Number of articles to return per page (default 25, max 100).
+        example: 25
+        schema:
+          type: integer
+      - name: cursor
+        in: query
+        required: false
+        description: Opaque pagination cursor from a previous response.
+        schema:
+          type: string
+      - name: primary_only
+        in: query
+        required: false
+        description: When `true`, only return articles where this company is the primary
+          subject (not just mentioned).
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: Company articles retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  articles:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/ArticleSummary"
+                  pagination:
+                    type: object
+                    properties:
+                      count:
+                        type: integer
+                      next_cursor:
+                        type: string
+                        nullable: true
+                required:
+                - articles
+  "/api/v1/companies/{identifier}/stories":
+    parameters:
+    - name: identifier
+      in: path
+      required: true
+      description: Company ID or ticker symbol
+      schema:
+        type: string
+    get:
+      summary: List company stories
+      tags:
+      - Companies
+      security:
+      - bearer_auth: []
+      description: Returns stories that mention a specific company, ordered by publication
+        date (newest first).
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for authentication
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        description: Number of stories to return per page (default 25, max 100).
+        example: 25
+        schema:
+          type: integer
+      - name: cursor
+        in: query
+        required: false
+        description: Opaque pagination cursor from a previous response.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Company stories retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  stories:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/StorySummary"
+                  pagination:
+                    type: object
+                    properties:
+                      count:
+                        type: integer
+                      next_cursor:
+                        type: string
+                        nullable: true
+                required:
+                - stories
+  "/api/v1/countries":
+    get:
+      summary: List countries
+      tags:
+      - Countries
+      security:
+      - bearer_auth: []
+      description: Returns active Nordic countries covered by the API, ordered alphabetically.
+        Currently includes Sweden, Norway, Denmark, Finland, and Iceland. Use country
+        identifiers to filter articles and stories by geographic region.
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for authentication
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        description: Number of countries to return per page (default 25, max 100).
+        example: 25
+        schema:
+          type: integer
+      - name: cursor
+        in: query
+        required: false
+        description: Opaque pagination cursor from a previous response.
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: 'Comma-separated list of fields to include. Available fields:
+          `id`, `name`, `iso2_code`.'
+        example: id,name,iso2_code
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Countries retrieved successfully
+          content:
+            application/json:
+              examples:
+                countries_list:
+                  value:
+                    countries:
+                    - id: ctry_sweden12
+                      name: Sweden
+                      iso2_code: SE
+                    pagination:
+                      count: 1
+                      next_cursor:
+              schema:
+                type: object
+                properties:
+                  countries:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CountrySummary"
+                  pagination:
+                    type: object
+                    properties:
+                      count:
+                        type: integer
+                      next_cursor:
+                        type: string
+                        nullable: true
+                required:
+                - countries
+  "/api/v1/countries/{identifier}":
+    parameters:
+    - name: identifier
+      in: path
+      required: true
+      description: Country ID, ISO 3166-1 alpha-2 code (e.g. `SE`), or slug (e.g.
+        `sweden`)
+      schema:
+        type: string
+    get:
+      summary: Get country details
+      tags:
+      - Countries
+      security:
+      - bearer_auth: []
+      description: Returns details for a single country. Look up by country ID, ISO
+        3166-1 alpha-2 code (e.g. `SE`), or slug (e.g. `sweden`).
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Country retrieved successfully
+          content:
+            application/json:
+              examples:
+                country_detail:
+                  value:
+                    country:
+                      id: ctry_sweden12
+                      name: Sweden
+                      iso2_code: SE
+              schema:
+                type: object
+                properties:
+                  country:
+                    "$ref": "#/components/schemas/CountrySummary"
+                required:
+                - country
+        '404':
+          description: Country not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/problem_details"
+  "/api/v1/countries/{identifier}/articles":
+    parameters:
+    - name: identifier
+      in: path
+      required: true
+      description: Country ID, ISO 3166-1 alpha-2 code (e.g. `SE`), or slug (e.g.
+        `sweden`)
+      schema:
+        type: string
+    get:
+      summary: List country articles
+      tags:
+      - Countries
+      security:
+      - bearer_auth: []
+      description: Returns articles from a specific country, ordered by publication
+        date (newest first). Supports incremental syncing via `updated_after` and
+        field projection.
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for authentication
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        description: Number of articles to return per page (default 25, max 100).
+        example: 25
+        schema:
+          type: integer
+      - name: cursor
+        in: query
+        required: false
+        description: Opaque pagination cursor from a previous response.
+        schema:
+          type: string
+      - name: updated_after
+        in: query
+        required: false
+        description: ISO 8601 datetime. Returns only articles updated after this timestamp.
+        example: '2024-01-01T00:00:00Z'
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: Comma-separated list of fields to include in the response.
+        example: id,title_en,summary_en,published_at
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Country articles retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  articles:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/ArticleSummary"
+                  pagination:
+                    type: object
+                    properties:
+                      count:
+                        type: integer
+                      next_cursor:
+                        type: string
+                        nullable: true
+                required:
+                - articles
+  "/api/v1/countries/{identifier}/stories":
+    parameters:
+    - name: identifier
+      in: path
+      required: true
+      description: Country ID, ISO 3166-1 alpha-2 code (e.g. `SE`), or slug (e.g.
+        `sweden`)
+      schema:
+        type: string
+    get:
+      summary: List country stories
+      tags:
+      - Countries
+      security:
+      - bearer_auth: []
+      description: Returns stories from a specific country, ordered by publication
+        date (newest first). Supports incremental syncing via `updated_after`.
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for authentication
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        description: Number of stories to return per page (default 25, max 100).
+        example: 25
+        schema:
+          type: integer
+      - name: cursor
+        in: query
+        required: false
+        description: Opaque pagination cursor from a previous response.
+        schema:
+          type: string
+      - name: updated_after
+        in: query
+        required: false
+        description: ISO 8601 datetime. Returns only stories updated after this timestamp.
+        example: '2024-01-01T00:00:00Z'
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Country stories retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  stories:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/StorySummary"
+                  pagination:
+                    type: object
+                    properties:
+                      count:
+                        type: integer
+                      next_cursor:
+                        type: string
+                        nullable: true
+                required:
+                - stories
+  "/api/v1/countries/{identifier}/exchanges":
+    parameters:
+    - name: identifier
+      in: path
+      required: true
+      description: Country ID, ISO 3166-1 alpha-2 code (e.g. `SE`), or slug (e.g.
+        `sweden`)
+      example: SE
+      schema:
+        type: string
+    get:
+      summary: List country exchanges
+      tags:
+      - Countries
+      security:
+      - bearer_auth: []
+      description: Returns stock exchanges located in a specific country, ordered
+        alphabetically. Requires `read:exchanges` scope.
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for authentication
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        description: Number of exchanges to return per page (default 25, max 100).
+        example: 25
+        schema:
+          type: integer
+      - name: cursor
+        in: query
+        required: false
+        description: Opaque pagination cursor from a previous response.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Country exchanges retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  exchanges:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/ExchangeSummary"
+                  pagination:
+                    type: object
+                    properties:
+                      count:
+                        type: integer
+                      next_cursor:
+                        type: string
+                        nullable: true
+                required:
+                - exchanges
+        '404':
+          description: Country not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/problem_details"
+  "/api/v1/exchanges":
+    get:
+      summary: List exchanges
+      tags:
+      - Exchanges
+      security:
+      - bearer_auth: []
+      description: Returns active Nordic stock exchanges, ordered alphabetically.
+        Supports filtering by country.
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for authentication
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        description: Number of exchanges to return per page (default 25, max 100).
+        example: 25
+        schema:
+          type: integer
+      - name: cursor
+        in: query
+        required: false
+        description: Opaque pagination cursor from a previous response.
+        schema:
+          type: string
+      - name: country
+        in: query
+        required: false
+        description: Filter by country using ISO 3166-1 alpha-2 code.
+        example: SE
+        schema:
+          type: string
+      - name: fields
+        in: query
+        required: false
+        description: 'Comma-separated list of fields to include in the response. Available
+          fields: `id`, `name`, `mic_code`, `acronym`, `country`.'
+        example: id,name,mic_code
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Exchanges retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  exchanges:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/ExchangeSummary"
+                  pagination:
+                    type: object
+                    properties:
+                      count:
+                        type: integer
+                      next_cursor:
+                        type: string
+                        nullable: true
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/problem_details"
+        '403':
+          description: forbidden - insufficient scope
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/problem_details"
+  "/api/v1/exchanges/{identifier}":
+    parameters:
+    - name: identifier
+      in: path
+      required: true
+      description: Exchange ID or MIC code (e.g. `XSTO`)
+      schema:
+        type: string
+    get:
+      summary: Get exchange details
+      tags:
+      - Exchanges
+      security:
+      - bearer_auth: []
+      description: Returns detailed information about a stock exchange, including
+        currency, timezone, and location. Look up by exchange ID (e.g. `exch_nasdaq1`)
+        or MIC code (e.g. `XSTO`).
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Exchange retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  exchange:
+                    "$ref": "#/components/schemas/ExchangeDetail"
+                required:
+                - exchange
+        '404':
+          description: Exchange not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/problem_details"
+  "/api/v1/exchanges/{identifier}/companies":
+    parameters:
+    - name: identifier
+      in: path
+      required: true
+      description: Exchange ID or MIC code (e.g. `XSTO`)
+      schema:
+        type: string
+    get:
+      summary: List exchange companies
+      tags:
+      - Exchanges
+      security:
+      - bearer_auth: []
+      description: Returns verified companies with stock listings on a specific exchange,
+        ordered alphabetically by name. Only companies that are verified and have
+        an active ticker symbol are included.
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for authentication
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        description: Number of companies to return per page (default 25, max 100).
+        example: 25
+        schema:
+          type: integer
+      - name: cursor
+        in: query
+        required: false
+        description: Opaque pagination cursor from a previous response.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Exchange companies retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  companies:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CompanySummary"
+                  pagination:
+                    type: object
+                    properties:
+                      count:
+                        type: integer
+                      next_cursor:
+                        type: string
+                        nullable: true
+                required:
+                - companies
+        '404':
+          description: Exchange not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/problem_details"
+  "/api/v1/health":
+    get:
+      summary: Health check endpoint
+      tags:
+      - Health
+      description: Returns the health status of the API
+      responses:
+        '200':
+          description: successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - ok
+                required:
+                - status
+  "/api/v1/watchlist":
+    get:
+      summary: List watchlist companies
+      tags:
+      - Watchlist
+      security:
+      - bearer_auth: []
+      description: Returns the authenticated user's watchlist — the companies they
+        follow. Ordered alphabetically by name. Requires the `read:watchlist` scope.
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for authentication
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        description: Number of companies to return per page (default 25, max 100).
+        example: 25
+        schema:
+          type: integer
+      - name: cursor
+        in: query
+        required: false
+        description: Opaque pagination cursor returned as `pagination.next_cursor`
+          from a previous response.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Watchlist retrieved successfully
+          content:
+            application/json:
+              examples:
+                watchlist:
+                  value:
+                    companies:
+                    - id: comp_abc12345
+                      name: Ericsson AB
+                      slug: ericsson-ab
+                      ticker_symbol: ERIC
+                    pagination:
+                      count: 1
+                      next_cursor:
+              schema:
+                type: object
+                properties:
+                  companies:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/CompanySummary"
+                  pagination:
+                    type: object
+                    properties:
+                      count:
+                        type: integer
+                      next_cursor:
+                        type: string
+                        nullable: true
+                required:
+                - companies
+servers:
+- url: http://localhost:3000
+  description: Development server
+- url: https://nordicfinancialnews.com/api/v1
+  description: Production server
+components:
+  securitySchemes:
+    bearer_auth:
+      type: http
+      scheme: bearer
+      bearerFormat: API Key
+      description: API Key authentication using Bearer token
+  schemas:
+    problem_details:
+      type: object
+      required:
+      - type
+      - title
+      - status
+      - detail
+      - instance
+      properties:
+        type:
+          type: string
+          description: URI that identifies the problem type
+          example: https://docs.nordicfinancialnews.com/problems/not-found
+        title:
+          type: string
+          description: Short human-readable summary
+          example: Not Found
+        status:
+          type: integer
+          description: HTTP status code
+          example: 404
+        detail:
+          type: string
+          description: Human-readable explanation
+          example: The requested resource could not be found
+        instance:
+          type: string
+          description: URI that identifies the specific occurrence
+          example: urn:request:abc123
+    ArticleSummary:
+      type: object
+      required:
+      - id
+      - title
+      - title_en
+      - summary_en
+      - published_at
+      - article_url
+      - source
+      - content_type
+      - category
+      properties:
+        id:
+          type: string
+          description: Unique article identifier
+          example: art_abc123def
+        title:
+          type: string
+          description: Original article title in source language
+          example: Title
+        title_en:
+          type: string
+          description: AI-translated English title
+          example: Title
+        summary_en:
+          type: string
+          description: AI-generated English summary
+          example: Summary
+        article_url:
+          type: string
+          description: URL to the original article on the source website
+          example: https://example.com/articles/abc123def
+        content_type:
+          type: string
+          description: Classification of the article content
+          example: news
+          enum:
+          - news
+          - analysis
+          - press_release
+          - market_commentary
+          - market_news
+          - trading_halt
+          - trading_event
+          - other
+        published_at:
+          type: string
+          format: date-time
+          description: When the article was originally published (ISO 8601)
+        story_ids:
+          type: array
+          items:
+            type: string
+          description: IDs of stories this article belongs to
+        category:
+          type: object
+          description: Article category
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+        source:
+          type: object
+          description: The news source that published this article
+          properties:
+            name:
+              type: string
+              example: Source Name
+            domain:
+              type: string
+              example: example.com
+        companies:
+          type: array
+          description: Verified companies associated with the article
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: Company ID
+              name:
+                type: string
+                description: Company name
+              ticker_symbol:
+                type: string
+                nullable: true
+                description: Full stock ticker including exchange suffix (e.g. VOLV-B.ST)
+        country:
+          type: string
+          nullable: true
+          description: ISO 3166-1 alpha-2 country code (e.g. SE, NO, DK)
+          example: SE
+        image_url:
+          type: string
+          nullable: true
+          description: URL to the article's featured image, if available
+    ArticleDetail:
+      allOf:
+      - "$ref": "#/components/schemas/ArticleSummary"
+      - type: object
+        properties:
+          updated_at:
+            type: string
+            format: date-time
+            description: When the article was last updated (ISO 8601)
+          key_points:
+            type: array
+            items:
+              type: string
+            description: AI-extracted key points from the article
+          topics:
+            type: array
+            items:
+              type: string
+            description: Topics associated with this article
+    StorySummary:
+      type: object
+      required:
+      - id
+      - title
+      - summary
+      - article_count
+      - published_at
+      properties:
+        id:
+          type: string
+          description: Unique story identifier
+        title:
+          type: string
+          description: AI-generated story title
+        summary:
+          type: string
+          description: AI-generated story summary
+        article_count:
+          type: integer
+          description: Number of articles in this story cluster
+        published_at:
+          type: string
+          format: date-time
+          description: When the story was first published (ISO 8601)
+        article_ids:
+          type: array
+          items:
+            type: string
+          description: IDs of articles belonging to this story
+        country:
+          type: string
+          nullable: true
+          description: Primary country associated with the story (ISO 3166-1 alpha-2)
+        topics:
+          type: array
+          items:
+            type: string
+          description: Topics associated with this story
+        companies:
+          type: array
+          description: Verified companies associated with the story
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: Company ID
+              name:
+                type: string
+                description: Company name
+              ticker_symbol:
+                type: string
+                nullable: true
+                description: Full stock ticker including exchange suffix (e.g. VOLV-B.ST)
+        category:
+          type: object
+          description: Story category
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+    StoryDetail:
+      allOf:
+      - "$ref": "#/components/schemas/StorySummary"
+      - type: object
+        properties:
+          content:
+            type: string
+            format: markdown
+            description: Full AI-generated story content in Markdown format
+          updated_at:
+            type: string
+            format: date-time
+            description: When the story was last updated (ISO 8601)
+          primary_article_id:
+            type: string
+            nullable: true
+            description: ID of the primary/most relevant article in the story
+    CategorySummary:
+      type: object
+      required:
+      - id
+      - name
+      - description
+      properties:
+        id:
+          type: string
+          description: Unique category identifier
+          example: cat_business12
+        name:
+          type: string
+          description: Category display name
+          example: Earnings & Financial Results
+        description:
+          type: string
+          description: Brief description of the category
+          example: Quarterly and annual earnings reports, profit warnings, revenue
+            announcements, financial guidance, dividend declarations, and other corporate
+            financial disclosures.
+    CompanySummary:
+      type: object
+      required:
+      - id
+      - name
+      - slug
+      properties:
+        id:
+          type: string
+          description: Unique company identifier
+          example: comp_apple123
+        name:
+          type: string
+          description: Company display name
+          example: Apple Inc.
+        slug:
+          type: string
+          description: URL-friendly company name
+          example: apple-inc
+        ticker_symbol:
+          type: string
+          nullable: true
+          description: Full stock ticker including exchange suffix (null if unlisted)
+          example: VOLV-B.ST
+        exchange:
+          type: object
+          nullable: true
+          description: Primary exchange where the company is listed
+          properties:
+            id:
+              type: string
+              description: Exchange identifier
+            name:
+              type: string
+              description: Exchange display name
+            mic_code:
+              type: string
+              description: ISO 10383 Market Identifier Code
+    CompanyDetail:
+      allOf:
+      - "$ref": "#/components/schemas/CompanySummary"
+      - type: object
+        properties:
+          composite_figi:
+            type: string
+            nullable: true
+            description: Composite FIGI identifier
+          aliases:
+            type: array
+            items:
+              type: string
+            description: Alternative names for the company
+            example:
+            - Apple Computer
+            - Apple Computer Inc.
+          article_count:
+            type: integer
+            description: Number of live articles mentioning this company
+            example: 42
+          story_count:
+            type: integer
+            description: Number of published stories mentioning this company
+            example: 15
+          stock_listings:
+            type: array
+            description: All stock listings for this company across exchanges
+            items:
+              type: object
+              properties:
+                ticker_symbol:
+                  type: string
+                  description: Ticker symbol on this exchange
+                ticker_root:
+                  type: string
+                  nullable: true
+                  description: Root ticker without share class suffix
+                full_ticker:
+                  type: string
+                  nullable: true
+                  description: Full ticker including exchange suffix
+                share_class_figi:
+                  type: string
+                  nullable: true
+                  description: Share class FIGI identifier
+                isin:
+                  type: string
+                  nullable: true
+                  description: ISIN code
+                currency:
+                  type: string
+                  nullable: true
+                  description: Trading currency (ISO 4217)
+                primary:
+                  type: boolean
+                  description: Whether this is the primary listing
+                exchange:
+                  type: object
+                  nullable: true
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    mic_code:
+                      type: string
+    CountrySummary:
+      type: object
+      required:
+      - id
+      - name
+      - iso2_code
+      properties:
+        id:
+          type: string
+          description: Unique country identifier
+          example: ctry_sweden12
+        name:
+          type: string
+          description: Country display name
+          example: Sweden
+        iso2_code:
+          type: string
+          description: ISO 3166-1 alpha-2 country code
+          example: SE
+    ExchangeSummary:
+      type: object
+      required:
+      - id
+      - name
+      - mic_code
+      properties:
+        id:
+          type: string
+          description: Unique exchange identifier
+          example: exch_nasdaq1
+        name:
+          type: string
+          description: Exchange display name
+          example: Nasdaq Stockholm
+        mic_code:
+          type: string
+          description: ISO 10383 Market Identifier Code
+          example: XSTO
+        acronym:
+          type: string
+          nullable: true
+          description: Exchange acronym
+          example: NASDAQ
+        country:
+          type: object
+          description: Country where the exchange is located
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+            iso2_code:
+              type: string
+    ExchangeDetail:
+      allOf:
+      - "$ref": "#/components/schemas/ExchangeSummary"
+      - type: object
+        properties:
+          operating_mic_code:
+            type: string
+            nullable: true
+            description: Parent operating MIC code (for segment exchanges)
+            example: XSTO
+          currency:
+            type: string
+            nullable: true
+            description: Primary trading currency (ISO 4217)
+            example: SEK
+          ticker_suffix:
+            type: string
+            nullable: true
+            description: Ticker suffix used for this exchange
+            example: ST
+          timezone:
+            type: string
+            nullable: true
+            description: Exchange timezone
+            example: Europe/Stockholm
+          website:
+            type: string
+            nullable: true
+            description: Exchange website URL
+          city:
+            type: string
+            nullable: true
+            description: City where the exchange is located
+    SearchResult:
+      type: object
+      required:
+      - results
+      - pagination
+      properties:
+        results:
+          type: object
+          properties:
+            articles:
+              type: array
+              items:
+                "$ref": "#/components/schemas/ArticleSummary"
+            stories:
+              type: array
+              items:
+                "$ref": "#/components/schemas/StorySummary"
+            companies:
+              type: array
+              items:
+                "$ref": "#/components/schemas/CompanySummary"
+            countries:
+              type: array
+              items:
+                "$ref": "#/components/schemas/CountrySummary"
+            exchanges:
+              type: array
+              items:
+                "$ref": "#/components/schemas/ExchangeSummary"
+        pagination:
+          type: object
+          properties:
+            articles:
+              type: object
+              properties:
+                count:
+                  type: integer
+                limit:
+                  type: integer
+            stories:
+              type: object
+              properties:
+                count:
+                  type: integer
+                limit:
+                  type: integer
+            companies:
+              type: object
+              properties:
+                count:
+                  type: integer
+                limit:
+                  type: integer
+            countries:
+              type: object
+              properties:
+                count:
+                  type: integer
+                limit:
+                  type: integer
+            exchanges:
+              type: object
+              properties:
+                count:
+                  type: integer
+                limit:
+                  type: integer

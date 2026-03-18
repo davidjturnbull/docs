@@ -1,0 +1,74 @@
+---
+title: "Authentication"
+description: "API key authentication, scopes, rate limits, and monthly usage quotas."
+---
+
+All API endpoints require Bearer token authentication using an API key.
+
+## API keys
+
+Include your API key in the `Authorization` header on every request:
+
+```bash
+Authorization: Bearer YOUR_API_KEY
+```
+
+Generate API keys from **Settings > API Keys** in your Nordic Financial News account. API access requires a Plus or Pro plan.
+
+## Scopes
+
+API keys use scope-based access control. All scopes are enabled by default:
+
+| Scope | Access |
+|-------|--------|
+| `read:articles` | List and retrieve articles |
+| `read:stories` | List and retrieve stories |
+| `read:companies` | List and retrieve companies |
+| `read:countries` | List and retrieve countries |
+| `read:categories` | List and retrieve categories |
+| `read:exchanges` | List and retrieve exchanges |
+| `read:watchlist` | Access your company watchlist |
+
+You can restrict scopes when creating an API key to limit access.
+
+## Rate limits
+
+The API enforces hourly rate limits per API key:
+
+- **3,600 requests per hour** (1 request per second average)
+
+Rate limit headers are included in every response:
+
+| Header | Description |
+|--------|-------------|
+| `X-RateLimit-Limit` | Maximum requests per hour |
+| `X-RateLimit-Remaining` | Requests remaining this hour |
+| `X-RateLimit-Reset` | Seconds until the limit resets |
+
+## Monthly usage limits
+
+Each API key has a monthly request allowance based on your plan:
+
+| Plan | Monthly requests |
+|------|-----------------|
+| Free | 50 |
+| Plus | 10,000 |
+| Pro | 50,000 |
+
+Monthly usage headers are included in every response:
+
+| Header | Description |
+|--------|-------------|
+| `X-Monthly-Limit` | Your plan's monthly allowance |
+| `X-Monthly-Remaining` | Requests remaining this month |
+| `X-Monthly-Reset` | ISO 8601 timestamp when the limit resets |
+
+When either limit is exceeded, the API returns `429 Too Many Requests` with a `Retry-After` header.
+
+## IP allowlists
+
+You can optionally restrict API key access to specific IP addresses. Configure this in **Settings > API Keys** when creating or editing a key.
+
+<Tip>
+`304 Not Modified` responses from [ETag caching](/guides/caching) do not count against your monthly quota.
+</Tip>

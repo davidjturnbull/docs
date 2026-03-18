@@ -1,33 +1,65 @@
 ---
-title: 'Introduction'
-description: 'Example section for showcasing API endpoints'
+title: "API reference"
+description: "Complete reference for the Nordic Financial News REST API."
 ---
 
-<Note>
-  If you're not looking to build API reference documentation, you can delete
-  this section by removing the api-reference folder.
-</Note>
+The Nordic Financial News API provides read-only access to translated Nordic financial news articles, AI-generated story clusters, company profiles, and market data.
 
-## Welcome
+## Base URL
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
-
-<Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
->
-  View the OpenAPI specification file
-</Card>
+```
+https://nordicfinancialnews.com/api/v1
+```
 
 ## Authentication
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+All endpoints require a Bearer token in the `Authorization` header:
+
+```bash
+curl -H "Authorization: Bearer YOUR_API_KEY" \
+  "https://nordicfinancialnews.com/api/v1/articles"
+```
+
+See the [authentication guide](/guides/authentication) for details on API keys, scopes, and rate limits.
+
+## Resources
+
+Browse endpoints using the sidebar navigation. Available resources:
+
+| Resource | Description | Endpoints |
+|----------|-------------|-----------|
+| Articles | Translated Nordic news articles | List, Get |
+| Stories | AI-generated article clusters | List, Get, Articles |
+| Companies | Nordic company profiles | List, Get, Articles, Stories |
+| Categories | News categories | List, Get, Articles, Stories |
+| Countries | Nordic countries | List, Get, Articles, Stories, Exchanges |
+| Exchanges | Stock exchanges | List, Get, Companies |
+| Search | Full-text search across all resources | Search |
+| Meta | API metadata and capabilities | Get |
+
+## Common features
+
+All list endpoints support:
+
+- **[Cursor pagination](/guides/pagination)** for stable paging through results
+- **[Field projection](/guides/field-projection)** to select specific response fields
+- **[ETag caching](/guides/caching)** on individual resource endpoints
+- **[Real-time updates](/guides/real-time-updates)** via the `updated_after` parameter (articles and stories)
+- **Filtering** by country, category, ticker, content type, and date range
+- **Full-text search** with the `q` parameter
+
+## Response format
+
+All responses are JSON. List endpoints return a resource array and pagination object:
 
 ```json
-"security": [
-  {
-    "bearerAuth": []
+{
+  "articles": [...],
+  "pagination": {
+    "count": 25,
+    "next_cursor": "eyJpZCI6..."
   }
-]
+}
 ```
+
+Errors follow [RFC 9457 Problem Details](/guides/errors) format.

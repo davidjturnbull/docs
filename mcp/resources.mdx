@@ -1,0 +1,26 @@
+---
+title: "Resources"
+description: "MCP resources for priming AI assistant context with recent Nordic financial data."
+---
+
+The MCP server provides resources that AI assistants can read to prime their context without making tool calls. Resources are useful for giving an assistant an overview of recent activity before the user asks a question.
+
+## Available resources
+
+| URI | Description |
+|-----|-------------|
+| `nordic-news:///recent-articles` | 10 most recent translated articles |
+| `nordic-news:///recent-stories` | 10 most recent published stories |
+
+<Note>
+Resource support varies by MCP client. Not all clients read resources automatically.
+</Note>
+
+## Troubleshooting
+
+| Error | Cause | Fix |
+|-------|-------|-----|
+| `Unauthorized: Invalid or missing API key` | Missing or invalid Bearer token | Check your API key is active and correctly formatted |
+| `Unauthorized: API access not available on your plan` | Free plan | Upgrade to Plus or Pro |
+| Tool not appearing | Missing scope on API key | Enable the required scope in **Settings > API Keys** |
+| `Monthly API request limit exceeded` | Hit monthly limit | Wait for reset or upgrade your plan |

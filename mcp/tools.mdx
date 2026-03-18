@@ -1,0 +1,97 @@
+---
+title: "Tools"
+description: "MCP tools available for querying Nordic Financial News data."
+---
+
+The MCP server exposes tools that AI assistants can call to search and retrieve Nordic financial data. Tools are filtered by your API key's scopes.
+
+## Available tools
+
+| Tool | Description | Required scope |
+|------|-------------|---------------|
+| `search_articles` | Full-text search articles; filter by country, category, ticker, date, content type | `read:articles` |
+| `search_stories` | Search clustered article stories | `read:stories` |
+| `search_companies` | Search companies by name or ticker; filter by country, exchange | `read:companies` |
+| `get_article` | Retrieve full article with translated content | `read:articles` |
+| `get_story` | Retrieve story with all related articles | `read:stories` |
+| `get_company` | Look up company by ID or ticker symbol | `read:companies` |
+| `list_countries` | List Nordic countries with ISO2 codes | `read:countries` |
+| `list_categories` | List news categories | `read:categories` |
+| `list_exchanges` | List stock exchanges with MIC codes | `read:exchanges` |
+| `list_watchlist` | List your followed companies | `read:watchlist` |
+
+<Note>
+If a tool doesn't appear when listing tools, check that the required scope is enabled on your API key. All scopes are enabled by default.
+</Note>
+
+## Tool details
+
+### search_articles
+
+Search translated articles with full-text search and filters.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `query` | string | No | Full-text search query |
+| `country` | string | No | ISO 3166-1 alpha-2 code (SE, NO, DK, FI, IS) |
+| `category` | string | No | Category ID |
+| `ticker` | string | No | Company stock ticker |
+| `content_type` | string | No | news, analysis, press_release, market_commentary, etc. |
+| `published_after` | string | No | ISO 8601 datetime |
+| `published_before` | string | No | ISO 8601 datetime |
+| `limit` | integer | No | Results per page (1-100, default 25) |
+
+### search_stories
+
+Search AI-generated story clusters.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `query` | string | No | Full-text search query |
+| `country` | string | No | ISO 3166-1 alpha-2 code |
+| `category` | string | No | Category ID |
+| `ticker` | string | No | Company stock ticker |
+| `limit` | integer | No | Results per page (1-100, default 25) |
+
+### search_companies
+
+Search companies by name or ticker symbol.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `query` | string | No | Company name or ticker search |
+| `country` | string | No | ISO 3166-1 alpha-2 code |
+| `exchange` | string | No | Exchange MIC code (XSTO, XCSE, etc.) |
+| `limit` | integer | No | Results per page (1-100, default 25) |
+
+### get_article
+
+Retrieve the full details of a single article including translated content, key points, and company associations.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `id` | string | Yes | Article ID (e.g. `art_abc123def`) |
+
+### get_story
+
+Retrieve a story with its full AI-generated content and related articles.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `id` | string | Yes | Story ID (e.g. `sty_abc123def`) |
+
+### get_company
+
+Look up a company by ID or ticker symbol.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `identifier` | string | Yes | Company ID or ticker symbol |
+
+### list_countries, list_categories, list_exchanges
+
+These tools take no required parameters and return all available entries.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `limit` | integer | No | Results per page (default 25) |

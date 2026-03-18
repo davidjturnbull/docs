@@ -1,122 +1,180 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
-  "name": "Mint Starter Kit",
+  "theme": "palm",
+  "name": "Nordic Financial News",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#1E3A5F",
+    "light": "#4A90D9",
+    "dark": "#0F2440"
   },
   "favicon": "/favicon.svg",
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "api": {
+    "playground": {
+      "display": "interactive",
+      "proxy": true
+    },
+    "examples": {
+      "languages": ["bash", "python", "ruby", "javascript"],
+      "defaults": "all",
+      "autogenerate": true
+    },
+    "mdx": {
+      "server": "https://nordicfinancialnews.com",
+      "auth": {
+        "method": "bearer"
+      }
+    }
+  },
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Documentation",
         "groups": [
           {
             "group": "Getting started",
             "pages": [
               "index",
-              "quickstart",
-              "development"
+              "quickstart"
             ]
           },
           {
-            "group": "Customization",
+            "group": "Guides",
             "pages": [
-              "essentials/settings",
-              "essentials/navigation"
-            ]
-          },
-          {
-            "group": "Writing content",
-            "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
-            ]
-          },
-          {
-            "group": "AI tools",
-            "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "guides/authentication",
+              "guides/pagination",
+              "guides/caching",
+              "guides/real-time-updates",
+              "guides/field-projection",
+              "guides/errors"
             ]
           }
         ]
       },
       {
         "tab": "API reference",
+        "openapi": "openapi.yaml",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "Overview",
             "pages": [
               "api-reference/introduction"
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "Articles",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "GET /api/v1/articles",
+              "GET /api/v1/articles/{public_id}"
+            ]
+          },
+          {
+            "group": "Stories",
+            "pages": [
+              "GET /api/v1/stories",
+              "GET /api/v1/stories/{public_id}",
+              "GET /api/v1/stories/{public_id}/articles"
+            ]
+          },
+          {
+            "group": "Companies",
+            "pages": [
+              "GET /api/v1/companies",
+              "GET /api/v1/companies/{identifier}",
+              "GET /api/v1/companies/{identifier}/articles",
+              "GET /api/v1/companies/{identifier}/stories"
+            ]
+          },
+          {
+            "group": "Categories",
+            "pages": [
+              "GET /api/v1/categories",
+              "GET /api/v1/categories/{id}",
+              "GET /api/v1/categories/{public_id}/articles",
+              "GET /api/v1/categories/{public_id}/stories"
+            ]
+          },
+          {
+            "group": "Countries",
+            "pages": [
+              "GET /api/v1/countries",
+              "GET /api/v1/countries/{identifier}",
+              "GET /api/v1/countries/{identifier}/articles",
+              "GET /api/v1/countries/{identifier}/stories",
+              "GET /api/v1/countries/{identifier}/exchanges"
+            ]
+          },
+          {
+            "group": "Exchanges",
+            "pages": [
+              "GET /api/v1/exchanges",
+              "GET /api/v1/exchanges/{identifier}",
+              "GET /api/v1/exchanges/{identifier}/companies"
+            ]
+          },
+          {
+            "group": "Search",
+            "pages": [
+              "GET /api/v1/search"
+            ]
+          },
+          {
+            "group": "Utility",
+            "pages": [
+              "GET /api/v1/meta",
+              "GET /api/v1/health"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "MCP server",
+        "groups": [
+          {
+            "group": "MCP server",
+            "pages": [
+              "mcp/index",
+              "mcp/tools",
+              "mcp/resources"
             ]
           }
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
-  },
-  "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    ]
   },
   "navbar": {
     "links": [
       {
         "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "href": "mailto:api@nordicfinancialnews.com"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "label": "Get API key",
+      "href": "https://nordicfinancialnews.com/account/api_keys/new"
     }
   },
   "contextual": {
     "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "cursor",
+      "mcp"
+    ]
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "x": "https://x.com/nordicfinnews",
+      "github": "https://github.com/nordicfinancialnews"
     }
+  },
+  "search": {
+    "prompt": "Search docs..."
   }
 }

@@ -1,0 +1,57 @@
+---
+title: "Pagination"
+description: "Cursor-based pagination for stable, efficient paging through large result sets."
+---
+
+List endpoints use cursor-based pagination for stable results, even as new data is added.
+
+## How it works
+
+Every list response includes a `pagination` object:
+
+```json
+{
+  "articles": [...],
+  "pagination": {
+    "count": 25,
+    "next_cursor": "eyJpZCI6..."
+  }
+}
+```
+
+Pass `next_cursor` as the `cursor` query parameter to fetch the next page. When `next_cursor` is `null`, you've reached the end.
+
+```bash
+# First page
+curl -H "Authorization: Bearer $API_KEY" \
+  "https://nordicfinancialnews.com/api/v1/articles?limit=25"
+
+# Next page
+curl -H "Authorization: Bearer $API_KEY" \
+  "https://nordicfinancialnews.com/api/v1/articles?limit=25&cursor=eyJpZCI6..."
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `limit` | integer | 25 | Results per page (1-100) |
+| `cursor` | string | — | Opaque cursor from a previous response |
+
+## Cursor types
+
+Different endpoints use different cursor strategies for optimal ordering:
+
+| Endpoint | Cursor based on | Default order |
+|----------|----------------|---------------|
+| Articles, Stories | `published_at` + `id` | Newest first |
+| Companies, Countries | `name` + `public_id` | Alphabetical |
+| Exchanges | `name` + `public_id` | Alphabetical |
+
+<Warning>
+Cursors are opaque and signed. Do not attempt to construct or modify them. They may change format without notice.
+</Warning>
+
+<Note>
+When using the `q` (search) parameter, cursor pagination is replaced by relevance-ranked results. The `cursor` and `q` parameters are mutually exclusive.
+</Note>

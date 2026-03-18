@@ -1,0 +1,105 @@
+---
+title: "MCP server"
+description: "Connect AI assistants to query Nordic Financial News data using the Model Context Protocol."
+---
+
+Connect your AI agents and assistants to Nordic Financial News directly using the [Model Context Protocol](https://modelcontextprotocol.io). The MCP server provides the same data as the REST API through a tool-based interface designed for LLMs.
+
+## Endpoint
+
+```
+POST https://nordicfinancialnews.com/mcp
+```
+
+Streamable HTTP transport. All requests use `POST` with `Content-Type: application/json`.
+
+## Authentication
+
+The MCP server uses the same API keys as the REST API. Include a Bearer token in the `Authorization` header:
+
+```
+Authorization: Bearer YOUR_API_KEY
+```
+
+Requires a Plus or Pro plan. If you have an IP allowlist configured, make sure your AI client's IP is included.
+
+## Setup
+
+<Tabs>
+  <Tab title="Claude Code">
+```bash
+claude mcp add --transport http nordic-financial-news \
+  https://nordicfinancialnews.com/mcp \
+  --header "Authorization: Bearer YOUR_API_KEY"
+```
+  </Tab>
+  <Tab title="Claude Desktop">
+Requires the `mcp-remote` npm proxy. Add to `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS):
+
+```json
+{
+  "mcpServers": {
+    "nordic-financial-news": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "https://nordicfinancialnews.com/mcp",
+        "--header",
+        "Authorization: Bearer YOUR_API_KEY"
+      ]
+    }
+  }
+}
+```
+
+Requires a full restart of Claude Desktop after saving.
+  </Tab>
+  <Tab title="Cursor">
+Add to `.cursor/mcp.json` in your project:
+
+```json
+{
+  "mcpServers": {
+    "nordic-financial-news": {
+      "type": "streamable-http",
+      "url": "https://nordicfinancialnews.com/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_KEY"
+      }
+    }
+  }
+}
+```
+  </Tab>
+  <Tab title="Other clients">
+    Use any MCP client that supports Streamable HTTP transport:
+
+    | Setting | Value |
+    |---------|-------|
+    | Transport | Streamable HTTP |
+    | Method | `POST` |
+    | URL | `https://nordicfinancialnews.com/mcp` |
+    | Header | `Authorization: Bearer YOUR_API_KEY` |
+    | Header | `Content-Type: application/json` |
+  </Tab>
+</Tabs>
+
+## Quick test
+
+Verify your API key works by listing available tools:
+
+```bash
+curl -X POST https://nordicfinancialnews.com/mcp \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","method":"tools/list","params":{},"id":1}'
+```
+
+## Example prompts
+
+Once connected, try asking your AI assistant:
+
+- "What are the latest news articles about Volvo?"
+- "Summarize trending stories from Sweden this week"
+- "Find companies listed on the Helsinki exchange"
+- "Show me recent press releases from Norwegian companies"

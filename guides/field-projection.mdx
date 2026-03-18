@@ -1,0 +1,41 @@
+---
+title: "Field projection"
+description: "Select specific response fields to minimize payload size and speed up requests."
+---
+
+Use the `fields` parameter to request only the fields you need. This reduces payload size and optimizes database queries.
+
+## Usage
+
+Pass a comma-separated list of field names:
+
+```bash
+curl -H "Authorization: Bearer $API_KEY" \
+  "https://nordicfinancialnews.com/api/v1/articles?fields=id,title_en,summary_en,published_at"
+```
+
+## Available fields
+
+### Articles
+
+`id`, `title`, `title_en`, `summary_en`, `article_url`, `content_type`, `published_at`, `story_ids`, `source`, `companies`, `country`, `category`, `image_url`
+
+### Stories
+
+`id`, `title`, `summary`, `published_at`, `article_count`, `article_ids`, `country`, `category`, `topics`, `companies`
+
+### Companies
+
+`id`, `name`, `slug`, `ticker_symbol`, `exchange`
+
+### Countries
+
+`id`, `name`, `iso2_code`
+
+### Exchanges
+
+`id`, `name`, `mic_code`, `acronym`, `country`
+
+<Tip>
+Field projection is especially useful with [real-time updates](/guides/real-time-updates) to minimize bandwidth when polling frequently.
+</Tip>
