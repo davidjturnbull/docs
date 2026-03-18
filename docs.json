@@ -148,9 +148,9 @@
           {
             "group": "MCP server",
             "pages": [
-              "mcp/index",
-              "mcp/tools",
-              "mcp/resources"
+              "mcp-server/index",
+              "mcp-server/tools",
+              "mcp-server/resources"
             ]
           }
         ]
