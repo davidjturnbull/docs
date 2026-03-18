@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx mint:*)",
+      "mcp__plugin_mintlify_Mintlify__search_mintlify",
+      "Bash(git:*)",
+      "mcp__plugin_playwright_playwright__browser_navigate",
+      "Bash(cmux --help)",
+      "Bash(cmux help:*)",
+      "Bash(cmux tree:*)",
+      "Bash(cmux browser:*)",
+      "mcp__plugin_context7_context7__resolve-library-id",
+      "mcp__plugin_context7_context7__query-docs"
+    ]
+  }
+}

@@ -1,0 +1,3 @@
+[    1415ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://d3gk2c5xim1je2.cloudfront.net/v7.1.0/regular/layers.svg:0
+[    2463ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://d3gk2c5xim1je2.cloudfront.net/v7.1.0/regular/layers.svg:0
+[    3321ms] [WARNING] Connected to Socket.io @ http://localhost:3333/_next/static/chunks/26168-3c036287ef16aee9.js:22

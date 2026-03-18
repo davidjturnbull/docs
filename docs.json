@@ -153,14 +153,14 @@
         ]
       },
       {
-        "tab": "MCP Server",
+        "tab": "Model Context Protocol (MCP)",
         "groups": [
           {
-            "group": "MCP server",
+            "group": "Model Context Protocol (MCP)",
             "pages": [
-              "mcp-server/index",
-              "mcp-server/tools",
-              "mcp-server/resources"
+              "model-context-protocol/index",
+              "model-context-protocol/tools",
+              "model-context-protocol/resources"
             ]
           }
         ]
