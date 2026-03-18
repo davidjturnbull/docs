@@ -167,12 +167,6 @@
     ]
   },
   "navbar": {
-    "links": [
-      {
-        "label": "Support",
-        "href": "mailto:api@nordicfinancialnews.com"
-      }
-    ],
     "primary": {
       "type": "button",
       "label": "Get API key",
