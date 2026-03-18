@@ -51,7 +51,8 @@
             "group": "Getting started",
             "pages": [
               "index",
-              "quickstart"
+              "quickstart",
+              "guides/ai-tools"
             ]
           },
           {
@@ -62,8 +63,7 @@
               "guides/caching",
               "guides/real-time-updates",
               "guides/field-projection",
-              "guides/errors",
-              "guides/ai-tools"
+              "guides/errors"
             ]
           }
         ]
@@ -180,10 +180,8 @@
       "view",
       "chatgpt",
       "claude",
-      "perplexity",
       "cursor",
       "vscode",
-      "windsurf",
       "mcp"
     ]
   },
