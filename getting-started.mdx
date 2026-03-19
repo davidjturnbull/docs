@@ -1,5 +1,5 @@
 ---
-title: "Quickstart"
+title: "Getting started"
 description: "Get your API key and make your first request to the Nordic Financial News API."
 ---
 
@@ -27,7 +27,7 @@ resp = requests.get(
     params={"limit": 5},
 )
 data = resp.json()
-print(data["articles"][0]["title_en"])
+print(data["articles"][0]["title"])
 ```
 
 ```ruby Ruby
@@ -43,7 +43,7 @@ res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
 end
 
 data = JSON.parse(res.body)
-puts data["articles"].first["title_en"]
+puts data["articles"].first["title"]
 ```
 
 ```javascript JavaScript
@@ -54,7 +54,7 @@ const resp = await fetch(
   }
 );
 const data = await resp.json();
-console.log(data.articles[0].title_en);
+console.log(data.articles[0].title);
 ```
 
     </CodeGroup>
@@ -68,15 +68,14 @@ console.log(data.articles[0].title_en);
       "articles": [
         {
           "id": "art_abc123def",
-          "title": "Volvo rapporterar rekordvinst",
-          "title_en": "Volvo reports record profit",
-          "summary_en": "Volvo Group reported record quarterly profit...",
+          "title": "Volvo reports record profit",
+          "article_url": "https://di.se/articles/volvo-q3-2026",
           "content_type": "news",
-          "published_at": "2024-06-15T10:30:00Z",
-          "country": "SE",
-          "companies": [
-            { "id": "comp_volvo123", "name": "Volvo Group", "ticker_symbol": "VOLV-B.ST" }
-          ]
+          "published_at": "2026-03-15T09:30:00Z",
+          "category": { "id": "cat_earnings1", "name": "Earnings & Financial Results" },
+          "source": { "name": "Dagens Industri", "domain": "di.se" },
+          "company_ids": ["comp_volvo123"],
+          "country": "SE"
         }
       ],
       "pagination": {

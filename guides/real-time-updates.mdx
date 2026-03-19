@@ -17,7 +17,7 @@ Use the `updated_after` parameter on the `/articles` and `/stories` endpoints to
 
     ```bash
     curl -H "Authorization: Bearer $API_KEY" \
-      "https://nordicfinancialnews.com/api/v1/articles?updated_after=2024-01-01T00:00:00Z&fields=id,title_en,summary_en,published_at"
+      "https://nordicfinancialnews.com/api/v1/articles?updated_after=2024-01-01T00:00:00Z&fields=id,title,published_at,content_type"
     ```
   </Step>
 
@@ -35,7 +35,7 @@ LAST_SYNC="2024-01-01T00:00:00Z"
 
 # Fetch new/updated articles since last sync
 curl -H "Authorization: Bearer $API_KEY" \
-  "https://nordicfinancialnews.com/api/v1/articles?updated_after=$LAST_SYNC&fields=id,title_en,summary_en,published_at"
+  "https://nordicfinancialnews.com/api/v1/articles?updated_after=$LAST_SYNC&fields=id,title,published_at,content_type"
 
 # Fetch new/updated stories since last sync
 curl -H "Authorization: Bearer $API_KEY" \

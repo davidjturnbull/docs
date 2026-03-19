@@ -48,11 +48,12 @@
         "tab": "Documentation",
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Overview",
             "pages": [
               "index",
-              "quickstart",
-              "guides/ai-tools"
+              "getting-started",
+              "ai-tools",
+              "support"
             ]
           },
           {
@@ -89,8 +90,7 @@
             "group": "Stories",
             "pages": [
               "GET /api/v1/stories",
-              "GET /api/v1/stories/{id}",
-              "GET /api/v1/stories/{id}/articles"
+              "GET /api/v1/stories/{id}"
             ]
           },
           {
@@ -105,20 +105,14 @@
           {
             "group": "Categories",
             "pages": [
-              "GET /api/v1/categories",
-              "GET /api/v1/categories/{id}",
-              "GET /api/v1/categories/{id}/articles",
-              "GET /api/v1/categories/{id}/stories"
+              "GET /api/v1/categories"
             ]
           },
           {
             "group": "Countries",
             "pages": [
               "GET /api/v1/countries",
-              "GET /api/v1/countries/{identifier}",
-              "GET /api/v1/countries/{identifier}/articles",
-              "GET /api/v1/countries/{identifier}/stories",
-              "GET /api/v1/countries/{identifier}/exchanges"
+              "GET /api/v1/countries/{identifier}"
             ]
           },
           {
@@ -135,6 +129,12 @@
               "GET /api/v1/indices",
               "GET /api/v1/indices/{identifier}",
               "GET /api/v1/indices/{identifier}/companies"
+            ]
+          },
+          {
+            "group": "Watchlist",
+            "pages": [
+              "GET /api/v1/watchlist"
             ]
           },
           {

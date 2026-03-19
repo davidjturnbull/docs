@@ -11,18 +11,18 @@ Pass a comma-separated list of field names:
 
 ```bash
 curl -H "Authorization: Bearer $API_KEY" \
-  "https://nordicfinancialnews.com/api/v1/articles?fields=id,title_en,summary_en,published_at"
+  "https://nordicfinancialnews.com/api/v1/articles?fields=id,title,published_at,content_type"
 ```
 
 ## Available fields
 
 ### Articles
 
-`id`, `title`, `title_en`, `summary_en`, `article_url`, `content_type`, `published_at`, `story_ids`, `source`, `companies`, `country`, `category`, `image_url`
+`id`, `title`, `article_url`, `content_type`, `published_at`, `category`, `source`, `company_ids`, `country`
 
 ### Stories
 
-`id`, `title`, `summary`, `published_at`, `article_count`, `article_ids`, `country`, `category`, `topics`, `companies`
+`id`, `title`, `summary`, `published_at`, `article_count`, `article_ids`, `country`, `category`, `company_ids`
 
 ### Companies
 
