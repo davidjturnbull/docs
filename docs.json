@@ -82,15 +82,15 @@
             "group": "Articles",
             "pages": [
               "GET /api/v1/articles",
-              "GET /api/v1/articles/{public_id}"
+              "GET /api/v1/articles/{id}"
             ]
           },
           {
             "group": "Stories",
             "pages": [
               "GET /api/v1/stories",
-              "GET /api/v1/stories/{public_id}",
-              "GET /api/v1/stories/{public_id}/articles"
+              "GET /api/v1/stories/{id}",
+              "GET /api/v1/stories/{id}/articles"
             ]
           },
           {
@@ -107,8 +107,8 @@
             "pages": [
               "GET /api/v1/categories",
               "GET /api/v1/categories/{id}",
-              "GET /api/v1/categories/{public_id}/articles",
-              "GET /api/v1/categories/{public_id}/stories"
+              "GET /api/v1/categories/{id}/articles",
+              "GET /api/v1/categories/{id}/stories"
             ]
           },
           {
