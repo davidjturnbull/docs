@@ -70,7 +70,7 @@
       },
       {
         "tab": "API reference",
-        "openapi": "https://nordicfinancialnews.com/api-docs/v1/swagger.yaml",
+        "openapi": "https://nordicfinancialnews.com/swagger/v1/swagger.yaml",
         "groups": [
           {
             "group": "Overview",
