@@ -18,7 +18,8 @@ The MCP server exposes tools that AI assistants can call to search and retrieve 
 | `list_countries` | List Nordic countries with ISO2 codes | `read` |
 | `list_categories` | List news categories | `read` |
 | `list_exchanges` | List stock exchanges with MIC codes | `read` |
-| `list_watchlist` | List your followed companies | `read:watchlist` |
+| `list_watchlists` | List your watchlists | `read:watchlist` |
+| `get_watchlist` | Get a watchlist with its companies | `read:watchlist` |
 
 <Note>
 If a tool doesn't appear when listing tools, check that the required scope is enabled on your API key. The `read` scope covers all content tools and is enabled by default.
