@@ -135,13 +135,8 @@
             "group": "Watchlists",
             "pages": [
               "GET /api/v1/watchlists",
-              "POST /api/v1/watchlists",
               "GET /api/v1/watchlists/{id}",
-              "PATCH /api/v1/watchlists/{id}",
-              "DELETE /api/v1/watchlists/{id}",
-              "GET /api/v1/watchlists/{watchlist_id}/companies",
-              "POST /api/v1/watchlists/{watchlist_id}/companies",
-              "DELETE /api/v1/watchlists/{watchlist_id}/companies/{company_id}"
+              "GET /api/v1/watchlists/{watchlist_id}/companies"
             ]
           },
           {
