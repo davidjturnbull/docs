@@ -195,5 +195,10 @@
   },
   "search": {
     "prompt": "Search docs..."
+  },
+  "seo": {
+    "metatags": {
+      "canonical": "https://docs.nordicfinancialnews.com"
+    }
   }
 }

@@ -5,7 +5,7 @@ description: "API key authentication, scopes, rate limits, and monthly usage quo
 
 All API endpoints require Bearer token authentication using an API key.
 
-## API keys
+## How to authenticate with API keys
 
 Include your API key in the `Authorization` header on every request:
 
@@ -15,7 +15,7 @@ Authorization: Bearer YOUR_API_KEY
 
 Generate API keys from **Settings > API Keys** in your Nordic Financial News account. API access requires a Plus or Pro plan.
 
-## Scopes
+## API key scopes and permissions
 
 API keys use scope-based access control. All scopes are enabled by default:
 
@@ -26,9 +26,9 @@ API keys use scope-based access control. All scopes are enabled by default:
 
 You can restrict scopes when creating an API key to limit access.
 
-## Rate limits
+## Hourly rate limits
 
-The API enforces hourly rate limits per API key:
+The Nordic Financial News API enforces hourly rate limits per API key:
 
 - **3,600 requests per hour** (1 request per second average)
 
@@ -58,11 +58,7 @@ Monthly usage headers are included in every response:
 | `X-Monthly-Remaining` | Requests remaining this month |
 | `X-Monthly-Reset` | ISO 8601 timestamp when the limit resets |
 
-When either limit is exceeded, the API returns `429 Too Many Requests` with a `Retry-After` header.
-
-## IP allowlists
-
-You can optionally restrict API key access to specific IP addresses. Configure this in **Settings > API Keys** when creating or editing a key.
+When either the hourly rate limit or monthly usage limit is exceeded, the API returns `429 Too Many Requests` with a `Retry-After` header. See [error handling](/guides/errors) for details on handling `429` responses.
 
 <Tip>
 `304 Not Modified` responses from [ETag caching](/guides/caching) do not count against your monthly quota.

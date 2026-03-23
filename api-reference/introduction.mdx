@@ -11,7 +11,7 @@ The Nordic Financial News API provides read-only access to translated Nordic fin
 https://nordicfinancialnews.com/api/v1
 ```
 
-## Authentication
+## How to authenticate requests
 
 All endpoints require a Bearer token in the `Authorization` header:
 
@@ -22,9 +22,9 @@ curl -H "Authorization: Bearer YOUR_API_KEY" \
 
 See the [authentication guide](/guides/authentication) for details on API keys, scopes, and rate limits.
 
-## Resources
+## Available API resources
 
-Browse endpoints using the sidebar navigation. Available resources:
+Browse endpoints using the sidebar navigation. The Nordic Financial News API provides the following resources:
 
 | Resource | Description | Endpoints |
 |----------|-------------|-----------|
@@ -37,9 +37,9 @@ Browse endpoints using the sidebar navigation. Available resources:
 | Search | Full-text search across all resources | Search |
 | Meta | API metadata and capabilities | Get |
 
-## Common features
+## Features available on all list endpoints
 
-All list endpoints support:
+All Nordic Financial News API list endpoints support the following features. Each feature has a dedicated guide with usage examples:
 
 - **[Cursor pagination](/guides/pagination)** for stable paging through results
 - **[Field projection](/guides/field-projection)** to select specific response fields
@@ -48,9 +48,9 @@ All list endpoints support:
 - **Filtering** by country, category, ticker, content type, and date range
 - **Full-text search** with the `q` parameter
 
-## Response format
+## API response format
 
-All responses are JSON. List endpoints return a resource array and pagination object:
+All responses are JSON. List endpoints return a resource array and a pagination object:
 
 ```json
 {

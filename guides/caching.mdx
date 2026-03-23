@@ -3,9 +3,9 @@ title: "Caching"
 description: "Use ETags and conditional requests to save bandwidth and reduce API usage."
 ---
 
-The API supports HTTP caching with ETags on individual resource endpoints.
+The Nordic Financial News API supports HTTP caching with ETags on individual resource endpoints (e.g. fetching a single article or company by ID). Send a conditional request with the `If-None-Match` header, and the API returns `304 Not Modified` if the resource has not changed, saving bandwidth and reducing your monthly usage count.
 
-## How it works
+## How ETag caching works
 
 <Steps>
   <Step title="Make a request">
@@ -41,16 +41,16 @@ The API supports HTTP caching with ETags on individual resource endpoints.
   </Step>
 </Steps>
 
-## Benefits
+## Why use ETag caching
 
 - **Save bandwidth** by not re-downloading unchanged data
-- **Reduce monthly usage** since `304` responses do not count against your monthly quota
-- **Faster responses** with no body to parse
+- **Reduce monthly usage** since `304 Not Modified` responses do not count against your monthly quota
+- **Faster responses** with no response body to parse
 
-## When caching is disabled
+## When ETag caching is not available
 
-ETags are not available when using:
+ETags are not supported in these cases:
 
-- The `q` (search) parameter
-- The `updated_after` parameter
+- Requests that include the `q` (search) parameter
+- Requests that include the `updated_after` parameter
 - List endpoints (only individual resource endpoints support ETags)

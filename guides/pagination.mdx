@@ -3,9 +3,9 @@ title: "Pagination"
 description: "Cursor-based pagination for stable, efficient paging through large result sets."
 ---
 
-List endpoints use cursor-based pagination for stable results, even as new data is added.
+Nordic Financial News API list endpoints use cursor-based pagination for stable results, even as new data is added. All list endpoints (articles, stories, companies, countries, exchanges) support cursor pagination.
 
-## How it works
+## How cursor-based pagination works
 
 Every list response includes a `pagination` object:
 
@@ -31,7 +31,9 @@ curl -H "Authorization: Bearer $API_KEY" \
   "https://nordicfinancialnews.com/api/v1/articles?limit=25&cursor=eyJpZCI6..."
 ```
 
-## Parameters
+## Pagination parameters
+
+All Nordic Financial News API list endpoints accept these pagination parameters:
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
@@ -49,7 +51,7 @@ Different endpoints use different cursor strategies for optimal ordering:
 | Exchanges | `name` + `public_id` | Alphabetical |
 
 <Warning>
-Cursors are opaque and signed. Do not attempt to construct or modify them. They may change format without notice.
+Cursors are opaque and signed. Do not attempt to construct or modify cursor values. Cursor format may change without notice.
 </Warning>
 
 <Note>

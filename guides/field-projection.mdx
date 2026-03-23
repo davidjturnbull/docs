@@ -3,18 +3,20 @@ title: "Field projection"
 description: "Select specific response fields to minimize payload size and speed up requests."
 ---
 
-Use the `fields` parameter to request only the fields you need. This reduces payload size and optimizes database queries.
+The Nordic Financial News API supports field projection on all list and detail endpoints. Use the `fields` query parameter to request only the fields you need. Selecting specific fields reduces payload size and optimizes database queries.
 
-## Usage
+## How to use field projection
 
-Pass a comma-separated list of field names:
+Pass a comma-separated list of field names in the `fields` query parameter:
 
 ```bash
 curl -H "Authorization: Bearer $API_KEY" \
   "https://nordicfinancialnews.com/api/v1/articles?fields=id,title,published_at,content_type"
 ```
 
-## Available fields
+## Available fields by resource
+
+The following fields can be requested with the `fields` parameter for each Nordic Financial News API resource type.
 
 ### Articles
 

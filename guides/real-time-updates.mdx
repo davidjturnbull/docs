@@ -3,13 +3,13 @@ title: "Real-time updates"
 description: "Keep a local mirror in sync using the updated_after polling pattern."
 ---
 
-Use the `updated_after` parameter on the `/articles` and `/stories` endpoints to fetch only records that changed since your last sync.
+The Nordic Financial News API supports a polling pattern for keeping a local data mirror in sync. Use the `updated_after` parameter on the `/articles` and `/stories` endpoints to fetch only records that changed since your last sync.
 
-## Polling pattern
+## How to poll for updates
 
 <Steps>
   <Step title="Store your last sync timestamp">
-    Start with an initial timestamp (e.g. when you first synced) and update it after each successful poll.
+    Start with an initial timestamp (e.g. when you first synced) and update the stored timestamp after each successful poll.
   </Step>
 
   <Step title="Request updated records">
@@ -22,11 +22,11 @@ Use the `updated_after` parameter on the `/articles` and `/stories` endpoints to
   </Step>
 
   <Step title="Process and repeat">
-    Process the results, update your timestamp to the current time, then wait before polling again.
+    Process the returned articles or stories, update your sync timestamp to the current time, then wait before polling again.
   </Step>
 </Steps>
 
-## Example
+## Polling example with articles and stories
 
 <CodeGroup>
 
@@ -69,13 +69,13 @@ while True:
 
 </CodeGroup>
 
-## How updated_after works
+## How the updated_after parameter works
 
 When `updated_after` is set:
 
-- **All matching results** are returned in a single response (cursor pagination is disabled)
-- **Caching is disabled** since the results are time-sensitive
-- Results include both newly created and updated records
+- **All matching records** are returned in a single response (cursor pagination is disabled)
+- **ETag caching is disabled** since the results are time-sensitive
+- The response includes both newly created and recently modified records
 
 <Tip>
 Use the `fields` parameter to request only the fields you need, reducing bandwidth and response time. A 30-60 second polling interval works well for most use cases.

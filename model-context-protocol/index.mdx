@@ -6,7 +6,7 @@ description: "Connect AI assistants to query Nordic Financial News data using th
 
 Connect your AI agents and assistants to Nordic Financial News directly using the [Model Context Protocol](https://modelcontextprotocol.io). The MCP server provides the same data as the REST API through a tool-based interface designed for LLMs.
 
-## Endpoint
+## MCP server endpoint
 
 ```
 POST https://nordicfinancialnews.com/mcp
@@ -14,7 +14,7 @@ POST https://nordicfinancialnews.com/mcp
 
 Streamable HTTP transport. All requests use `POST` with `Content-Type: application/json`.
 
-## Authentication
+## How to authenticate MCP requests
 
 The MCP server uses the same API keys as the REST API. Include a Bearer token in the `Authorization` header:
 
@@ -22,9 +22,9 @@ The MCP server uses the same API keys as the REST API. Include a Bearer token in
 Authorization: Bearer YOUR_API_KEY
 ```
 
-Requires a Plus or Pro plan. If you have an IP allowlist configured, make sure your AI client's IP is included.
+Requires a Plus or Pro plan.
 
-## Setup
+## How to connect your AI client
 
 <Tabs>
   <Tab title="Claude Code">
@@ -85,9 +85,9 @@ Add to `.cursor/mcp.json` in your project:
   </Tab>
 </Tabs>
 
-## Quick test
+## How to verify your connection
 
-Verify your API key works by listing available tools:
+Verify your API key works by listing available MCP tools:
 
 ```bash
 curl -X POST https://nordicfinancialnews.com/mcp \

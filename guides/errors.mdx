@@ -3,9 +3,11 @@ title: "Error handling"
 description: "Error format, status codes, and how to handle API errors."
 ---
 
-The API uses [RFC 9457 Problem Details](https://www.rfc-editor.org/rfc/rfc9457) for error responses.
+The Nordic Financial News API uses [RFC 9457 Problem Details](https://www.rfc-editor.org/rfc/rfc9457) for all error responses. Every error includes a machine-readable `type` URI, a human-readable `title` and `detail`, and the HTTP `status` code.
 
-## Error format
+## API error response format
+
+All Nordic Financial News API errors return a JSON object with the following fields:
 
 ```json
 {
@@ -23,7 +25,7 @@ The API uses [RFC 9457 Problem Details](https://www.rfc-editor.org/rfc/rfc9457) 
 | `status` | HTTP status code |
 | `detail` | Specific explanation for this occurrence |
 
-## Status codes
+## HTTP status codes and common causes
 
 | Code | Meaning | Common cause |
 |------|---------|-------------|
@@ -34,17 +36,107 @@ The API uses [RFC 9457 Problem Details](https://www.rfc-editor.org/rfc/rfc9457) 
 | `429` | Too many requests | Rate limit or monthly limit exceeded |
 | `500` | Internal server error | Unexpected server error |
 
-## Rate limit errors
+## Error examples and how to fix them
 
-When you hit a rate limit, the response includes a `Retry-After` header indicating how many seconds to wait:
+### 400 Bad request
+
+Returned when a request contains invalid parameters, such as an unrecognized filter value or a malformed date.
+
+```json
+{
+  "type": "https://docs.nordicfinancialnews.com/problems/bad-request",
+  "title": "Bad request",
+  "status": 400,
+  "detail": "Invalid value for 'content_type': 'blog'. Allowed values: news, analysis, press_release, market_commentary."
+}
+```
+
+**How to fix:** Check the `detail` field for the specific validation error. Verify that query parameters match the expected types and allowed values documented in the [API reference](/api-reference/introduction).
+
+### 401 Unauthorized
+
+Returned when the `Authorization` header is missing, malformed, or contains an invalid API key.
+
+```json
+{
+  "type": "https://docs.nordicfinancialnews.com/problems/unauthorized",
+  "title": "Unauthorized",
+  "status": 401,
+  "detail": "Invalid or missing API key."
+}
+```
+
+**How to fix:** Verify your API key is included as a Bearer token in the `Authorization` header (`Authorization: Bearer YOUR_API_KEY`). Check that the key is active in **Settings > API Keys** and that your plan includes API access (Plus or Pro).
+
+### 403 Forbidden
+
+Returned when your API key is valid but lacks the required scope for the requested resource.
+
+```json
+{
+  "type": "https://docs.nordicfinancialnews.com/problems/forbidden",
+  "title": "Forbidden",
+  "status": 403,
+  "detail": "API key lacks required scope: read:watchlist."
+}
+```
+
+**How to fix:** Check which scopes are enabled on your API key in **Settings > API Keys**. Watchlist endpoints require the `read:watchlist` scope. See [API key scopes and permissions](/guides/authentication#api-key-scopes-and-permissions) for the full scope list.
+
+### 404 Not found
+
+Returned when the requested resource does not exist, either because the ID is wrong or the resource has been removed.
+
+```json
+{
+  "type": "https://docs.nordicfinancialnews.com/problems/not-found",
+  "title": "Resource not found",
+  "status": 404,
+  "detail": "No article found with id 'art_abc123def'."
+}
+```
+
+**How to fix:** Verify the resource ID is correct. Article IDs start with `art_`, story IDs with `sty_`. For companies, you can use either the company ID or ticker symbol.
+
+### 429 Too many requests
+
+Returned when you exceed the hourly rate limit (3,600 requests per hour) or your monthly usage quota.
+
+```json
+{
+  "type": "https://docs.nordicfinancialnews.com/problems/rate-limited",
+  "title": "Too many requests",
+  "status": 429,
+  "detail": "Hourly rate limit exceeded."
+}
+```
+
+**How to fix:** Check the `Retry-After` header for how many seconds to wait before retrying. Monitor the `X-RateLimit-Remaining` and `X-Monthly-Remaining` response headers to track your usage proactively. See [hourly rate limits](/guides/authentication#hourly-rate-limits) and [monthly usage limits](/guides/authentication#monthly-usage-limits) for quota details by plan.
+
+## How to handle rate limit errors
+
+When you exceed a rate limit, the API response includes a `Retry-After` header indicating how many seconds to wait:
 
 ```http
 HTTP/1.1 429 Too Many Requests
 Retry-After: 60
 ```
 
-Check the `X-RateLimit-Remaining` and `X-Monthly-Remaining` headers to monitor your usage proactively. See [authentication](/guides/authentication) for details on rate limits and monthly quotas.
+Use these response headers on every request to monitor your usage before hitting a limit:
 
-## Request tracing
+| Header | Description |
+|--------|-------------|
+| `X-RateLimit-Remaining` | Requests remaining in the current hour |
+| `X-Monthly-Remaining` | Requests remaining in the current month |
 
-Every response includes an `X-Request-Id` header. Include this ID when contacting support about a specific request.
+<Tip>
+`304 Not Modified` responses from [ETag caching](/guides/caching) do not count against your monthly quota. Use conditional requests to reduce your effective usage.
+</Tip>
+
+## How to trace requests with X-Request-Id
+
+Every Nordic Financial News API response includes an `X-Request-Id` header with a unique identifier for that request. Include the `X-Request-Id` value when contacting [support](/support) to help diagnose issues with a specific request.
+
+```http
+X-Request-Id: req_7f3a2b1c-4d5e-6f7a-8b9c-0d1e2f3a4b5c
+```

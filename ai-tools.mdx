@@ -6,7 +6,7 @@ keywords: ["AI", "MCP", "LLM", "Claude", "ChatGPT", "Cursor", "VS Code", "llms.t
 
 Every page on this site is optimized for AI tools. Send content to your favorite AI assistant, connect the docs to your IDE, or point agents at machine-readable files.
 
-## Contextual menu
+## How to use the contextual menu
 
 Each page has a contextual menu (top-right of the page content) that lets you interact with AI tools in one click:
 
@@ -59,7 +59,7 @@ claude mcp add nfn-docs https://docs.nordicfinancialnews.com/mcp
 </Tabs>
 
 <Note>
-This connects your AI assistant to the **documentation** for search and context. To query **live API data** (articles, stories, companies), use the [NFN API MCP server](/model-context-protocol) instead.
+The docs MCP server connects your AI assistant to the **documentation** for search and context. To query **live API data** (articles, stories, companies), use the [NFN API MCP server](/model-context-protocol) instead.
 </Note>
 
 Once connected, you can ask your AI assistant questions like:
@@ -78,9 +78,9 @@ The Nordic Financial News API has its own MCP server for querying live data dire
   Connect AI assistants to query live Nordic Financial News data.
 </Card>
 
-## Build with machine-readable files
+## Machine-readable files for AI integrations
 
-If you're building AI integrations on top of Nordic Financial News, these machine-readable files are available at the root of the docs site:
+If you're building AI integrations on top of the Nordic Financial News API, these machine-readable files are available at the root of the docs site:
 
 | File | URL | Purpose |
 |------|-----|---------|
@@ -88,7 +88,7 @@ If you're building AI integrations on top of Nordic Financial News, these machin
 | `llms-full.txt` | [/llms-full.txt](/llms-full.txt) | The entire documentation site combined into a single file |
 | `skill.md` | [/skill.md](/skill.md) | Auto-generated capability summary describing what agents can do with the NFN API |
 
-### Markdown export
+### How to export pages as Markdown
 
 Every page is available as clean Markdown by appending `.md` to the URL. For example:
 
@@ -96,9 +96,9 @@ Every page is available as clean Markdown by appending `.md` to the URL. For exa
 https://docs.nordicfinancialnews.com/guides/authentication.md
 ```
 
-This is useful for feeding specific pages into AI tools or building custom integrations.
+Markdown export is useful for feeding specific pages into AI tools or building custom integrations.
 
-### Using skill.md with agents
+### How to use skill.md with AI agents
 
 The `skill.md` file follows the [agentskills.io](https://agentskills.io) specification. AI coding tools can install it directly:
 
@@ -107,5 +107,5 @@ npx skills add https://docs.nordicfinancialnews.com
 ```
 
 <Tip>
-This gives your agent context about NFN API capabilities, required inputs, and constraints so it can make API calls on your behalf more reliably.
+Installing skill.md gives your agent context about Nordic Financial News API capabilities, required inputs, and constraints so the agent can make API calls on your behalf more reliably.
 </Tip>
