@@ -135,8 +135,7 @@
             "group": "Watchlists",
             "pages": [
               "GET /api/v1/watchlists",
-              "GET /api/v1/watchlists/{id}",
-              "GET /api/v1/watchlists/{watchlist_id}/companies"
+              "GET /api/v1/watchlists/{id}"
             ]
           },
           {
