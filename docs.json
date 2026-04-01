@@ -94,18 +94,18 @@
             ]
           },
           {
+            "group": "Search",
+            "pages": [
+              "GET /api/v1/search"
+            ]
+          },
+          {
             "group": "Companies",
             "pages": [
               "GET /api/v1/companies",
               "GET /api/v1/companies/{identifier}",
               "GET /api/v1/companies/{identifier}/articles",
               "GET /api/v1/companies/{identifier}/stories"
-            ]
-          },
-          {
-            "group": "Categories",
-            "pages": [
-              "GET /api/v1/categories"
             ]
           },
           {
@@ -132,16 +132,16 @@
             ]
           },
           {
+            "group": "Categories",
+            "pages": [
+              "GET /api/v1/categories"
+            ]
+          },
+          {
             "group": "Watchlists",
             "pages": [
               "GET /api/v1/watchlists",
               "GET /api/v1/watchlists/{id}"
-            ]
-          },
-          {
-            "group": "Search",
-            "pages": [
-              "GET /api/v1/search"
             ]
           },
           {
