@@ -100,7 +100,7 @@ Returned when the requested resource does not exist, either because the ID is wr
 
 ### 429 Too many requests
 
-Returned when you exceed the hourly rate limit (3,600 requests per hour) or your monthly usage quota.
+Returned when you exceed your hourly rate limit or monthly usage quota.
 
 ```json
 {
@@ -111,7 +111,7 @@ Returned when you exceed the hourly rate limit (3,600 requests per hour) or your
 }
 ```
 
-**How to fix:** Check the `Retry-After` header for how many seconds to wait before retrying. Monitor the `X-RateLimit-Remaining` and `X-Monthly-Remaining` response headers to track your usage proactively. See [hourly rate limits](/guides/authentication#hourly-rate-limits) and [monthly usage limits](/guides/authentication#monthly-usage-limits) for quota details by plan.
+**How to fix:** Check the `Retry-After` header for how many seconds to wait before retrying. Monitor the `X-RateLimit-Remaining` and `X-Monthly-Remaining` response headers to track your usage proactively. Check your current limits in [API key settings](https://nordicfinancialnews.com/settings/api_keys).
 
 ## How to handle rate limit errors
 

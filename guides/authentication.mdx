@@ -13,7 +13,7 @@ Include your API key in the `Authorization` header on every request:
 Authorization: Bearer YOUR_API_KEY
 ```
 
-Generate API keys from **Settings > API Keys** in your Nordic Financial News account. API access requires a Plus or Pro plan.
+Generate API keys from **Settings > API Keys** in your Nordic Financial News account.
 
 ## API key scopes and permissions
 
@@ -26,39 +26,24 @@ API keys use scope-based access control. All scopes are enabled by default:
 
 You can restrict scopes when creating an API key to limit access.
 
-## Hourly rate limits
+## Rate limits and usage quotas
 
-The Nordic Financial News API enforces hourly rate limits per API key:
+The API enforces hourly rate limits and monthly usage quotas per API key. Your current limits and usage are visible in your [API key settings](https://nordicfinancialnews.com/settings/api_keys).
 
-- **3,600 requests per hour** (1 request per second average)
+### Rate limit headers
 
-Rate limit headers are included in every response:
+Every response includes headers so you can track usage proactively:
 
 | Header | Description |
 |--------|-------------|
 | `X-RateLimit-Limit` | Maximum requests per hour |
 | `X-RateLimit-Remaining` | Requests remaining this hour |
-| `X-RateLimit-Reset` | Seconds until the limit resets |
-
-## Monthly usage limits
-
-Each API key has a monthly request allowance based on your plan:
-
-| Plan | Monthly requests |
-|------|-----------------|
-| Free | 50 |
-| Plus | 10,000 |
-| Pro | 50,000 |
-
-Monthly usage headers are included in every response:
-
-| Header | Description |
-|--------|-------------|
+| `X-RateLimit-Reset` | Seconds until the hourly limit resets |
 | `X-Monthly-Limit` | Your plan's monthly allowance |
 | `X-Monthly-Remaining` | Requests remaining this month |
-| `X-Monthly-Reset` | ISO 8601 timestamp when the limit resets |
+| `X-Monthly-Reset` | ISO 8601 timestamp when the monthly limit resets |
 
-When either the hourly rate limit or monthly usage limit is exceeded, the API returns `429 Too Many Requests` with a `Retry-After` header. See [error handling](/guides/errors) for details on handling `429` responses.
+When either limit is exceeded, the API returns `429 Too Many Requests` with a `Retry-After` header. See [error handling](/guides/errors) for details on handling `429` responses.
 
 <Tip>
 `304 Not Modified` responses from [ETag caching](/guides/caching) do not count against your monthly quota.
