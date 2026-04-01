@@ -1,6 +1,7 @@
 ---
 title: "Caching"
 description: "Use ETags and conditional requests to save bandwidth and reduce API usage."
+keywords: ["caching", "ETag", "If-None-Match", "304 Not Modified", "conditional request"]
 ---
 
 The Nordic Financial News API supports HTTP caching with ETags on individual resource endpoints (e.g. fetching a single article or company by ID). Send a conditional request with the `If-None-Match` header, and the API returns `304 Not Modified` if the resource has not changed, saving bandwidth and reducing your monthly usage count.

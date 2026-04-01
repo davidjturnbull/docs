@@ -197,7 +197,13 @@
   },
   "seo": {
     "metatags": {
-      "canonical": "https://docs.nordicfinancialnews.com"
-    }
+      "canonical": "https://docs.nordicfinancialnews.com",
+      "og:site_name": "Nordic Financial News Documentation",
+      "og:locale": "en_US"
+    },
+    "indexing": "navigable"
+  },
+  "metadata": {
+    "timestamp": true
   }
 }
