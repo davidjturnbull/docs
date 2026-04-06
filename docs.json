@@ -190,7 +190,22 @@
     "socials": {
       "x": "https://x.com/nordicfinnews",
       "github": "https://github.com/nordicfinancialnews"
-    }
+    },
+    "links": [
+      {
+        "header": "Legal",
+        "items": [
+          {
+            "label": "Disclaimer",
+            "href": "/#disclaimer"
+          },
+          {
+            "label": "Terms of Use",
+            "href": "https://nordicfinancialnews.com/terms"
+          }
+        ]
+      }
+    ]
   },
   "search": {
     "prompt": "Search docs..."

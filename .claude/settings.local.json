@@ -18,7 +18,8 @@
       "Bash(curl -s \"https://mintlify.com/docs/settings/llms-txt\" -L)",
       "Bash(wc -l /Users/david/code/nfn-docs/*.mdx /Users/david/code/nfn-docs/**/*.mdx)",
       "WebFetch(domain:www.mintlify.com)",
-      "Bash(cmux read-screen:*)"
+      "Bash(cmux read-screen:*)",
+      "mcp__plugin_mintlify_Mintlify__get_page_mintlify"
     ]
   }
 }
