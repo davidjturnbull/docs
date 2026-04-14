@@ -2,7 +2,7 @@
 title: "MCP server"
 sidebarTitle: "Overview"
 description: "Connect AI assistants to query Nordic Financial News data using the Model Context Protocol."
-keywords: ["MCP", "Model Context Protocol", "AI assistant", "Claude", "Cursor", "LLM"]
+keywords: ["MCP", "Model Context Protocol", "AI assistant", "Claude", "Cursor", "Codex", "LLM"]
 ---
 
 Connect your AI agents and assistants to Nordic Financial News directly using the [Model Context Protocol](https://modelcontextprotocol.io). The MCP server provides the same data as the REST API through a tool-based interface designed for LLMs.
@@ -72,6 +72,15 @@ Add to `.cursor/mcp.json` in your project:
   }
 }
 ```
+  </Tab>
+  <Tab title="Codex">
+```bash
+codex mcp add nordic-financial-news \
+  --url https://nordicfinancialnews.com/mcp \
+  --bearer-token-env-var NFN_API_KEY
+```
+
+Set the `NFN_API_KEY` environment variable to your API key before starting Codex.
   </Tab>
   <Tab title="Other clients">
     Use any MCP client that supports Streamable HTTP transport:
