@@ -1,7 +1,7 @@
 ---
 title: "AI tools & resources"
 description: "Use AI assistants and agents to explore the Nordic Financial News API and API docs."
-keywords: ["AI", "MCP", "LLM", "Claude", "ChatGPT", "Cursor", "VS Code", "llms.txt", "agent", "IDE"]
+keywords: ["AI", "MCP", "LLM", "Claude", "ChatGPT", "Codex", "Cursor", "VS Code", "llms.txt", "agent", "IDE"]
 ---
 
 This documentation site is optimized for AI tools to make it easier for you to get started. Send content to your favorite AI assistant, connect the docs to your IDE, or point agents at machine-readable files.
@@ -16,7 +16,7 @@ Documentation pages have a contextual menu (top-right of the page content) that 
 - **Cursor / VS Code**: install the docs MCP server directly into your IDE
 - **MCP**: copy the docs MCP server URL for any MCP-compatible client
 
-## Connect your AI agent to our docs via MCP
+## Connect your AI agent to our API docs via MCP
 
 This documentation site has an MCP server, powered by Mintlify. Connect it to your AI coding assistant so it can search the NFN docs without leaving your editor.
 
@@ -25,6 +25,16 @@ Your AI assistant or IDE must support [Model Context Protocol (MCP)](https://mod
 </Info>
 
 <Tabs>
+  <Tab title="Claude Code">
+```bash
+claude mcp add nfn-docs https://docs.nordicfinancialnews.com/mcp
+```
+  </Tab>
+  <Tab title="Codex">
+```bash
+codex mcp add nfn-docs --url https://docs.nordicfinancialnews.com/mcp
+```
+  </Tab>
   <Tab title="Cursor">
 Use the contextual menu on any page and select **Connect to Cursor**, or manually add to `.cursor/mcp.json`:
 
@@ -51,11 +61,6 @@ Use the contextual menu on any page and select **Connect to VS Code**, or add to
 }
 ```
   </Tab>
-  <Tab title="Claude Code">
-```bash
-claude mcp add nfn-docs https://docs.nordicfinancialnews.com/mcp
-```
-  </Tab>
 </Tabs>
 
 <Note>
@@ -70,13 +75,17 @@ Once connected, you can ask your AI assistant questions like:
 
 Your assistant will search the NFN docs and use the results to answer accurately.
 
-## Query live NFN data with your AI assistant
+### How to use skill.md with AI agents
 
-The Nordic Financial News API has its own MCP server for querying live data directly from your AI assistant. Search articles, stories, companies, and more. This is separate from the docs MCP server above.
+The `skill.md` file follows the [agentskills.io](https://agentskills.io) specification. AI coding tools can install it directly:
 
-<Card title="MCP server setup" icon="robot" color="#01B2FF" href="/model-context-protocol" horizontal>
-  Connect AI assistants to query live Nordic Financial News data.
-</Card>
+```bash
+npx skills add https://docs.nordicfinancialnews.com
+```
+
+<Tip>
+Installing skill.md gives your agent context about Nordic Financial News API capabilities, required inputs, and constraints so the agent can make API calls on your behalf more reliably.
+</Tip>
 
 ## Machine-readable files for AI integrations
 
@@ -98,14 +107,10 @@ https://docs.nordicfinancialnews.com/guides/authentication.md
 
 Markdown export is useful for feeding specific pages into AI tools or building custom integrations.
 
-### How to use skill.md with AI agents
+## Query live NFN data with your AI assistant
 
-The `skill.md` file follows the [agentskills.io](https://agentskills.io) specification. AI coding tools can install it directly:
+The Nordic Financial News API has its own MCP server for querying live data directly from your AI assistant. Search articles, stories, companies, and more. This is separate from the docs MCP server above.
 
-```bash
-npx skills add https://docs.nordicfinancialnews.com
-```
-
-<Tip>
-Installing skill.md gives your agent context about Nordic Financial News API capabilities, required inputs, and constraints so the agent can make API calls on your behalf more reliably.
-</Tip>
+<Card title="MCP server setup" icon="robot" color="#01B2FF" href="/model-context-protocol" horizontal>
+  Connect AI assistants to query live Nordic Financial News data.
+</Card>
