@@ -11,10 +11,10 @@ The Nordic Financial News MCP server exposes tools that AI assistants can call t
 | Tool | Description | Required scope |
 |------|-------------|---------------|
 | `search_articles` | Full-text search articles; filter by country, category, ticker, date, content type | `read` |
-| `search_stories` | Search clustered article stories | `read` |
+| `search_stories` | Search AI-generated event summary stories | `read` |
 | `search_companies` | Search companies by name or ticker; filter by country, exchange, sector | `read` |
 | `get_article` | Retrieve full article with translated content | `read` |
-| `get_story` | Retrieve story with all related articles | `read` |
+| `get_story` | Retrieve a story with its narrative and source articles | `read` |
 | `get_company` | Look up company by ID or ticker symbol | `read` |
 | `list_countries` | List Nordic countries with ISO2 codes | `read` |
 | `list_categories` | List news categories | `read` |
@@ -45,7 +45,7 @@ Search translated articles with full-text search and filters.
 
 ### search_stories
 
-Search story clusters.
+Search AI-generated event summary stories.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
@@ -77,7 +77,7 @@ Retrieve the full details of a single article including translated content, key 
 
 ### get_story
 
-Retrieve a story with its full content and related articles.
+Retrieve a story with its full narrative content and source articles.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
