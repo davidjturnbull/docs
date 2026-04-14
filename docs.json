@@ -154,6 +154,18 @@
         ]
       },
       {
+        "tab": "CLI Tool",
+        "groups": [
+          {
+            "group": "CLI Tool",
+            "pages": [
+              "cli/index",
+              "cli/commands"
+            ]
+          }
+        ]
+      },
+      {
         "tab": "Model Context Protocol (MCP)",
         "groups": [
           {

@@ -1,0 +1,107 @@
+---
+title: "Commands"
+description: "Complete reference for all Nordic Financial News CLI commands."
+keywords: ["CLI commands", "nfn", "articles", "stories", "companies", "search"]
+---
+
+## Articles
+
+```bash
+nfn articles list                 # list recent articles
+nfn articles list --limit 5      # limit results
+nfn articles list --country SE   # filter by country
+nfn articles list --category "Earnings & Financial Results"
+nfn articles list --ticker VOLV-B
+nfn articles get <id>            # fetch a specific article
+```
+
+## Stories
+
+```bash
+nfn stories list                  # list recent stories
+nfn stories get <id>              # fetch a specific story
+```
+
+## Companies
+
+```bash
+nfn companies list                       # list all companies
+nfn companies get <identifier>           # look up by ID or ticker
+nfn companies articles <identifier>      # articles for a company
+nfn companies stories <identifier>       # stories for a company
+```
+
+## Search
+
+```bash
+nfn search "Volvo"
+```
+
+## Exchanges and indices
+
+```bash
+nfn exchanges list                       # list exchanges
+nfn exchanges get <mic>                  # exchange details by MIC code
+nfn exchanges companies <mic>            # companies on an exchange
+
+nfn indices list                         # list indices
+nfn indices get <symbol>                 # index details
+nfn indices companies <symbol>           # companies in an index
+```
+
+## Reference data
+
+```bash
+nfn categories                           # list article categories
+nfn countries list                       # list supported countries
+nfn countries get <code>                 # country details by ISO code
+```
+
+## Watchlists
+
+```bash
+nfn watchlists list                      # list your watchlists
+nfn watchlists get <id>                  # get a specific watchlist
+```
+
+## Utilities
+
+```bash
+nfn doctor                               # verify system health
+nfn version                              # display CLI version
+nfn commands                             # JSON catalog of all commands
+```
+
+## Output formatting
+
+The CLI automatically detects your environment:
+
+- **Interactive terminal**: formatted tables
+- **Piped or scripted**: JSON output
+
+Override the default with `--format`:
+
+```bash
+nfn articles list --format json
+nfn articles list --format table
+```
+
+### Pipe to other tools
+
+Because the CLI outputs JSON when piped, you can combine it with tools like `jq`:
+
+```bash
+nfn articles list --limit 10 | jq '.data.articles[].title'
+```
+
+## Get help
+
+Every command has built-in help:
+
+```bash
+nfn --help
+nfn articles --help
+nfn articles list --help
+```
+
+For bugs and feature requests, open an issue on [GitHub](https://github.com/nordic-financial-news/nfn-cli/issues).

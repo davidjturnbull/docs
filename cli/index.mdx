@@ -1,0 +1,82 @@
+---
+title: "CLI"
+sidebarTitle: "Overview"
+description: "Install and use the Nordic Financial News CLI to query articles, stories, companies, and more from your terminal."
+keywords: ["CLI", "command line", "terminal", "nfn", "nfn-cli"]
+---
+
+The Nordic Financial News CLI (`nfn`) gives you direct access to the API from your terminal. Browse articles, search companies, and explore market data without writing code.
+
+The CLI outputs formatted tables in interactive terminals and JSON when piped to other commands, making it useful for both exploration and scripting.
+
+<Card title="GitHub repository" icon="github" href="https://github.com/nordic-financial-news/nfn-cli" horizontal>
+  Source code, releases, and issue tracker.
+</Card>
+
+## Install
+
+<Tabs>
+  <Tab title="Homebrew">
+```bash
+brew install nordic-financial-news/tap/nfn
+```
+  </Tab>
+  <Tab title="Binary download">
+Download the latest binary for your platform from the [releases page](https://github.com/nordic-financial-news/nfn-cli/releases).
+  </Tab>
+</Tabs>
+
+Verify the installation:
+
+```bash
+nfn version
+```
+
+## Authenticate
+
+The CLI uses the same API keys as the REST API. You can authenticate interactively or with an environment variable.
+
+<Tabs>
+  <Tab title="Interactive login">
+```bash
+nfn auth login
+```
+
+This stores your API key securely in your system keyring.
+  </Tab>
+  <Tab title="Environment variable">
+```bash
+export NFN_API_KEY=your-api-key
+```
+  </Tab>
+</Tabs>
+
+Check your authentication status and rate limit info:
+
+```bash
+nfn auth status
+```
+
+To remove stored credentials:
+
+```bash
+nfn auth logout
+```
+
+<Info>
+Don't have an API key yet? Generate one in [API key settings](https://nordicfinancialnews.com/settings/api_keys).
+</Info>
+
+## SKILL.md
+
+Install the agent skill to give your AI coding assistant context about CLI capabilities and usage:
+
+```bash
+npx skills add https://github.com/nordic-financial-news/nfn-cli/skills/nfn-cli
+```
+
+## Next steps
+
+<Card title="Commands" icon="square-terminal" color="#01B2FF" href="/cli/commands" horizontal>
+  Browse all available CLI commands.
+</Card>
