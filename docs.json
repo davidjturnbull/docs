@@ -138,6 +138,12 @@
             ]
           },
           {
+            "group": "Sources",
+            "pages": [
+              "GET /api/v1/sources"
+            ]
+          },
+          {
             "group": "Watchlists",
             "pages": [
               "GET /api/v1/watchlists",
