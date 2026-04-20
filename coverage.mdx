@@ -1,0 +1,67 @@
+---
+title: "Coverage"
+description: "Sources covered by the Nordic Financial News API, organized by type."
+keywords: ["coverage", "sources", "Nordic news", "publishers", "wires", "regulators", "exchanges"]
+---
+
+The Nordic Financial News API covers business news, company news, regulatory filings, and exchange disclosures from Sweden, Denmark, Norway, Finland, and Iceland. [Articles](/api-reference/articles/list-articles) are available within minutes of publication and include an English headline, summary, and key points, and a link to the original-language source article.
+
+## Flagship business press
+
+National business dailies and public broadcasters, including:
+
+| Country | Sources |
+|---------|---------|
+| Sweden | Dagens industri, Dagens Nyheter, Svenska Dagbladet, Affärsvärlden, Breakit, SVT |
+| Denmark | Børsen, FinansWatch, DR |
+| Norway | Dagens Næringsliv, Finansavisen, E24 |
+| Finland | Kauppalehti, Helsingin Sanomat, Talouselämä, Yle |
+| Iceland | Morgunblaðið, Viðskiptablaðið |
+
+## Wires and exchanges
+
+Earnings releases, M&A announcements, director dealings, and regulatory notices from Nordic-listed companies flows through these channels.
+
+### Wire services
+
+Cision, GlobeNewswire, MFN, Via TT, Mynewsdesk, Finwire, BeQuoted.
+
+### Stock exchanges
+
+Nasdaq Stockholm, Nasdaq Copenhagen, Nasdaq Helsinki, Nasdaq Iceland, Euronext Oslo Børs, Nordic Growth Market, Spotlight Stock Market.
+
+## Central banks and regulators
+
+Rate decisions, supervisory rulings, licensing, and fines, direct from the bodies that shape Nordic finance.
+
+| Country | Central bank | Financial regulator |
+|---------|--------------|---------------------|
+| Sweden | Sveriges Riksbank | Finansinspektionen |
+| Denmark | Danmarks Nationalbank | Finanstilsynet |
+| Norway | Norges Bank | Finanstilsynet |
+| Finland | Suomen Pankki | FIN-FSA |
+| Iceland | Central Bank of Iceland | Central Bank of Iceland (combined) |
+
+## Beyond the headlines
+
+A further 20+ specialist sources are covered but not individually listed here. They fall into three groups:
+
+- **Government ministries and agencies** that flag regulatory shifts before the wires catch them.
+- **Specialist trade and investor publications** covering niche sectors that national dailies skip.
+- **Equity research providers** publishing analyst notes on Nordic-listed companies.
+
+[Contact us](/support) if you need to verify coverage of a specific source before you build.
+
+## Filter by source via the API
+
+Use [`GET /api/v1/sources`](/api-reference/sources/list-sources) to discover source IDs, then pass a comma-separated list to the `sources` parameter on [`GET /api/v1/articles`](/api-reference/articles/list-articles) or [`GET /api/v1/stories`](/api-reference/stories/list-stories). You can pass up to 25 source IDs per request.
+
+```bash
+# 1. List available sources to get their IDs
+curl -H "Authorization: Bearer $API_KEY" \
+  "https://nordicfinancialnews.com/api/v1/sources?fields=id,name,domain"
+
+# 2. Filter articles to only those IDs
+curl -H "Authorization: Bearer $API_KEY" \
+  "https://nordicfinancialnews.com/api/v1/articles?sources=abc123def456,ghi789jkl012"
+```
